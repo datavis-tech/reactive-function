@@ -1,0 +1,32 @@
+{
+  "name": "reactive-function",
+  "version": "0.0.1",
+  "description": "A library for managing data flows and changing state.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/curran/reactive-function.git"
+  },
+  "keywords": [
+    "FRP",
+    "data",
+    "flow",
+    "flux",
+    "redux",
+    "MVC",
+    "function",
+    "programming",
+    "functional",
+    "reactive",
+    "programming"
+  ],
+  "author": "Curran Kelleher",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/curran/reactive-function/issues"
+  },
+  "homepage": "https://github.com/curran/reactive-function#readme"
+}
