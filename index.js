@@ -10,16 +10,13 @@ var errors = {
 // Edges represent dependencies of reactive functions.
 var graph = Graph();
 
-// This object accumulates nodes that have changed.
+// This object accumulates nodes that have changed since the last digest.
 // Keys are node ids, values are truthy (the object acts like a Set).
 var changedNodes = {};
 
 
 // A lookup table for properties based on their assigned id.
 var propertiesById = {};
-
-// Looks up a property by its id.
-function lookup(id){ return propertiesById[id]; }
 
 // Assigns ids to properties for use as nodes in the graph.
 var assignId = (function(){
@@ -32,35 +29,45 @@ var assignId = (function(){
   };
 }());
 
-// Gets a property value.
-function get(property){ return property(); }
-
 //ReactiveFunction(dependencies... , callback)
 function ReactiveFunction(){
+
+  // Parse arguments.
   var dependencies = Array.apply(null, arguments);
   var callback = dependencies.pop();
+
+  // This stores the output value.
   var value;
 
+  // The returned reactive function acts as a getter (not a setter).
   var reactiveFunction = function (){
     if(arguments.length > 0){ throw errors.notASetter; }
     return value;
   };
 
+  // This gets invoked during a digest, after dependencies have been evaluated.
   reactiveFunction.evaluate = function (){
-    value = callback.apply(null, dependencies.map(get));
+    value = callback.apply(null, dependencies.map(function (dependency){
+      return dependency();
+    }));
   };
 
+  // Assign node ids to dependencies and the reactive function.
   assignId(reactiveFunction);
+  dependencies.forEach(assignId);
+
+  // Set up edges in the graph from each dependency.
   dependencies.forEach(function (dependency){
-    assignId(dependency);
     graph.addEdge(dependency.id, reactiveFunction.id);
   });
 
+  // Compute which of the dependencies are properties (excludes reactive functions).
   var properties = dependencies
     .filter(function (dependency){
       return dependency.on;
     });
 
+  // Add change listeners to each dependency that is a property.
   var listeners = properties
     .map(function (property){
       return property.on(function (){
@@ -69,14 +76,18 @@ function ReactiveFunction(){
       });
     });
 
+  // This function must be called to explicitly destroy a reactive function.
+  // Garbage collection is not enough, as we have added listeners and edges.
   reactiveFunction.destroy = function (){
 
     // TODO test
+    // Remove change listeners from dependencies that are properties.
     listeners.forEach(function (listener, i){
       properties[i].off(listener);
     });
 
     // TODO test
+    // Remove the edges that were added to the dependency graph.
     dependencies.forEach(function (dependency){
       graph.removeEdge(dependency.id, reactiveFunction.id);
     });
@@ -86,18 +97,23 @@ function ReactiveFunction(){
   return reactiveFunction;
 }
 
+// Propagates changes through the dependency graph.
 ReactiveFunction.digest = function (){
   graph
     .topologicalSort(Object.keys(changedNodes))
-    .map(lookup)
+    .map(function (id){
+      return propertiesById[id];
+    })
     .forEach(function (reactiveFunction){
       reactiveFunction.evaluate();
     });
   changedNodes = {};
 };
 
+// This function queues a digest at the next tick of the event loop.
 var queueDigest = debounce(ReactiveFunction.digest);
 
+// Similar to http://underscorejs.org/#debounce
 function debounce(fn){
   var queued = false;
   return function () {
