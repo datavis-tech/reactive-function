@@ -18,7 +18,10 @@ var changedNodes = {};
 // A lookup table for properties based on their assigned id.
 var propertiesById = {};
 
-// This function assigns ids to properties for use as nodes in the graph.
+// Looks up a property by its id.
+function lookup(id){ return propertiesById[id]; }
+
+// Assigns ids to properties for use as nodes in the graph.
 var assignId = (function(){
   var idCounter = 1;
   return function (property){
@@ -28,9 +31,6 @@ var assignId = (function(){
     }
   };
 }());
-
-// Looks up a property by its id.
-function lookup(id){ return propertiesById[id]; }
 
 // Gets a property value.
 function get(property){ return property(); }
@@ -50,10 +50,9 @@ function ReactiveFunction(){
     value = callback.apply(null, dependencies.map(get));
   };
 
-  dependencies.forEach(assignId);
   assignId(reactiveFunction);
-
   dependencies.forEach(function (dependency){
+    assignId(dependency);
     graph.addEdge(dependency.id, reactiveFunction.id);
   });
 
@@ -66,6 +65,7 @@ function ReactiveFunction(){
     .map(function (property){
       return property.on(function (){
         changedNodes[property.id] = true;
+        queueDigest();
       });
     });
 
@@ -94,6 +94,21 @@ ReactiveFunction.digest = function (){
       reactiveFunction.evaluate();
     });
   changedNodes = {};
+};
+
+var queueDigest = debounce(ReactiveFunction.digest);
+
+function debounce(fn){
+  var queued = false;
+  return function () {
+    if(!queued){
+      queued = true;
+      setTimeout(function () {
+        queued = false;
+        fn();
+      }, 0);
+    }
+  };
 };
 
 
@@ -158,7 +173,7 @@ var c = ReactiveFunction(b, function (b){ return b + 5; });
 var d = ReactiveFunction(a, function (a){ return a * 3; });
 var e = ReactiveFunction(c, d, function (c, d){ return c + d; });
 ReactiveFunction.digest();
-assert.equal(e(), (5 * 2) + 5 + (5 * 3));
+assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
 
 
 // Should throw an error if attempting to set the value directly.
@@ -181,3 +196,18 @@ var b = ReactiveFunction(a, function (a){
 ReactiveFunction.digest();
 ReactiveFunction.digest();
 assert.equal(numInvocations, 1);
+
+
+// Should automatically digest on next tick.
+var a = ReactiveProperty(5);
+var b = ReactiveProperty(10);
+
+var c = ReactiveFunction(a, b, function (a, b){
+  return a + b;
+});
+
+setTimeout(function (){
+  assert.equal(c(), 15);
+  //done();
+}, 0);
+
