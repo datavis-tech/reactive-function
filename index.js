@@ -1,6 +1,7 @@
 var ReactiveProperty = require("./reactive-property.js");
 var Graph = require("./graph-data-structure.js");
 
+// Messages for exceptions thrown.
 var errors = {
   notASetter: Error("You cannot set the value of a reactive function directly.")
 };
@@ -115,15 +116,10 @@ var queueDigest = debounce(ReactiveFunction.digest);
 
 // Similar to http://underscorejs.org/#debounce
 function debounce(fn){
-  var queued = false;
+  var timeout;
   return function () {
-    if(!queued){
-      queued = true;
-      setTimeout(function () {
-        queued = false;
-        fn();
-      }, 0);
-    }
+    clearTimeout(timeout);
+    timeout = setTimeout(fn)
   };
 };
 
@@ -226,4 +222,3 @@ setTimeout(function (){
   assert.equal(c(), 15);
   //done();
 }, 0);
-
