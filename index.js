@@ -1,6 +1,10 @@
 var ReactiveProperty = require("./reactive-property.js");
 var Graph = require("./graph-data-structure.js");
 
+var errors = {
+  notASetter: Error("You cannot set the value of a reactive function directly.")
+};
+
 // The singleton data dependency graph.
 // Nodes are reactive properties and reactive functions.
 // Edges represent dependencies of reactive functions.
@@ -33,41 +37,51 @@ function get(property){ return property(); }
 
 //ReactiveFunction(dependencies... , callback)
 function ReactiveFunction(){
-
   var dependencies = Array.apply(null, arguments);
   var callback = dependencies.pop();
+  var value;
 
-  // Use a reactive property to contain the value.
-  var reactiveProperty = ReactiveProperty();
-
-  // Wrap the reactive property, disabling its setter behavior.
   var reactiveFunction = function (){
-    if(arguments.length > 0){
-      throw Error("You cannot set the value of a reactive function directly.");
-    }
-    return reactiveProperty();
+    if(arguments.length > 0){ throw errors.notASetter; }
+    return value;
   };
-  reactiveFunction.on = reactiveProperty.on;
-  reactiveFunction.off = reactiveProperty.off;
 
   reactiveFunction.evaluate = function (){
-    reactiveProperty(callback.apply(null, dependencies.map(get)));
+    value = callback.apply(null, dependencies.map(get));
   };
 
   dependencies.forEach(assignId);
   assignId(reactiveFunction);
 
-  // TODO provide an API for removing these edges
   dependencies.forEach(function (dependency){
     graph.addEdge(dependency.id, reactiveFunction.id);
   });
 
-  // TODO provide an API for removing these listeners
-  var listeners = dependencies.map(function (dependency){
-    return dependency.on(function (){
-      changedNodes[dependency.id] = true;
+  var properties = dependencies
+    .filter(function (dependency){
+      return dependency.on;
     });
-  });
+
+  var listeners = properties
+    .map(function (property){
+      return property.on(function (){
+        changedNodes[property.id] = true;
+      });
+    });
+
+  reactiveFunction.destroy = function (){
+
+    // TODO test
+    listeners.forEach(function (listener, i){
+      properties[i].off(listener);
+    });
+
+    // TODO test
+    dependencies.forEach(function (dependency){
+      graph.removeEdge(dependency.id, reactiveFunction.id);
+    });
+
+  };
 
   return reactiveFunction;
 }
@@ -147,16 +161,6 @@ ReactiveFunction.digest();
 assert.equal(e(), (5 * 2) + 5 + (5 * 3));
 
 
-// Should return a reactive property with an 'on' method.
-var a = ReactiveProperty(5);
-var b = ReactiveFunction(a, function (a){ return a * 2; });
-b.on(function (value){
-  assert.equal(value, 10);
-  //done();
-});
-ReactiveFunction.digest();
-
-
 // Should throw an error if attempting to set the value directly.
 var a = ReactiveProperty(5);
 var b = ReactiveFunction(a, function (a){ return a * 2; });
@@ -166,3 +170,14 @@ try{
   console.log("Error thrown correctly.");
 }
 
+
+// Should clear changed nodes on digest.
+var numInvocations = 0;
+var a = ReactiveProperty(5);
+var b = ReactiveFunction(a, function (a){
+  numInvocations++;
+  return a * 2;
+});
+ReactiveFunction.digest();
+ReactiveFunction.digest();
+assert.equal(numInvocations, 1);
