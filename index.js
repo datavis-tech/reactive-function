@@ -1,5 +1,5 @@
-var ReactiveProperty = require("./reactive-property.js");
-var Graph = require("./graph-data-structure.js");
+var ReactiveProperty = require("reactive-property");
+var Graph = require("graph-data-structure");
 
 // Messages for exceptions thrown.
 var errors = {
@@ -114,6 +114,10 @@ ReactiveFunction.digest = function (){
 // This function queues a digest at the next tick of the event loop.
 var queueDigest = debounce(ReactiveFunction.digest);
 
+// Returns a function that, when invoked, schedules the given function
+// to execute on the next tick of the JavaScript event loop.
+// Multiple sequential executions of the returned function within the same tick of
+// the event loop will collapse into a single invocation of the original function.
 // Similar to http://underscorejs.org/#debounce
 function debounce(fn){
   var timeout;
@@ -123,102 +127,4 @@ function debounce(fn){
   };
 };
 
-
-// TESTS /////////////////////////////////////////////////////////////////////
-var assert = require("assert");
-
-// Should depend on two reactive properties.
-var a = ReactiveProperty(5);
-var b = ReactiveProperty(10);
-
-var c = ReactiveFunction(a, b, function (a, b){
-  return a + b;
-});
-
-ReactiveFunction.digest();
-
-assert.equal(c(), 15);
-
-
-// Should depend on any number of reactive properties.
-var a = ReactiveProperty(5);
-var b = ReactiveProperty(10);
-var c = ReactiveProperty(15);
-
-var d = ReactiveFunction(a, function (a){ return a * 2; });
-var e = ReactiveFunction(a, b, c, function (a, b, c){ return a + b + c; });
-
-ReactiveFunction.digest();
-
-assert.equal(d(), 10);
-assert.equal(e(), 30);
-
-
-// Should depend on a reactive function.
-var a = ReactiveProperty(5);
-var b = ReactiveFunction(a, function (a){ return a * 2; });
-var c = ReactiveFunction(b, function (b){ return b / 2; });
-ReactiveFunction.digest();
-assert.equal(c(), 5);
-
-
-// Should depend on a reactive property and a reactive function.
-var a = ReactiveProperty(5);
-var b = ReactiveProperty(10);
-var c = ReactiveFunction(a, function (a){ return a * 2; });
-var d = ReactiveFunction(b, c, function (b, c){ return b + c; });
-ReactiveFunction.digest();
-assert.equal(d(), 20);
-
-
-// Should handle tricky case.
-//      a
-//     / \
-//    b   |
-//    |   d
-//    c   |
-//     \ /
-//      e   
-var a = ReactiveProperty(5);
-var b = ReactiveFunction(a, function (a){ return a * 2; });
-var c = ReactiveFunction(b, function (b){ return b + 5; });
-var d = ReactiveFunction(a, function (a){ return a * 3; });
-var e = ReactiveFunction(c, d, function (c, d){ return c + d; });
-ReactiveFunction.digest();
-assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
-
-
-// Should throw an error if attempting to set the value directly.
-var a = ReactiveProperty(5);
-var b = ReactiveFunction(a, function (a){ return a * 2; });
-try{
-  b(5);
-} catch (err){
-  console.log("Error thrown correctly.");
-}
-
-
-// Should clear changed nodes on digest.
-var numInvocations = 0;
-var a = ReactiveProperty(5);
-var b = ReactiveFunction(a, function (a){
-  numInvocations++;
-  return a * 2;
-});
-ReactiveFunction.digest();
-ReactiveFunction.digest();
-assert.equal(numInvocations, 1);
-
-
-// Should automatically digest on next tick.
-var a = ReactiveProperty(5);
-var b = ReactiveProperty(10);
-
-var c = ReactiveFunction(a, b, function (a, b){
-  return a + b;
-});
-
-setTimeout(function (){
-  assert.equal(c(), 15);
-  //done();
-}, 0);
+module.exports = ReactiveFunction;

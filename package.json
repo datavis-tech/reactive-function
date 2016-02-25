@@ -28,5 +28,12 @@
   "bugs": {
     "url": "https://github.com/curran/reactive-function/issues"
   },
-  "homepage": "https://github.com/curran/reactive-function#readme"
+  "homepage": "https://github.com/curran/reactive-function#readme",
+  "dependencies": {
+    "graph-data-structure": "^0.1.0",
+    "reactive-property": "^0.7.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5"
+  }
 }
