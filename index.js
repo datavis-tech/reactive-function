@@ -33,9 +33,12 @@ var assignId = (function(){
 //ReactiveFunction(dependencies... , callback)
 function ReactiveFunction(){
 
+  // TODO check for wrong number of args
+
   // Parse arguments.
-  var dependencies = Array.apply(null, arguments);
-  var callback = dependencies.pop();
+  var args = Array.apply(null, arguments);
+  var dependencies = args.splice(1);
+  var callback = args[0];
 
   // This stores the output value.
   var value;

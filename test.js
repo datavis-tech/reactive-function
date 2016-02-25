@@ -12,9 +12,11 @@ describe("ReactiveFunction", function() {
   it("Should depend on two reactive properties.", function () {
     var a = ReactiveProperty(5);
     var b = ReactiveProperty(10);
-    var c = ReactiveFunction(a, b, function (a, b){
+
+    var c = ReactiveFunction(function (a, b){
       return a + b;
-    });
+    }, a, b);
+
     ReactiveFunction.digest();
     assert.equal(c(), 15);
   });
@@ -24,8 +26,13 @@ describe("ReactiveFunction", function() {
     var b = ReactiveProperty(10);
     var c = ReactiveProperty(15);
 
-    var d = ReactiveFunction(a, function (a){ return a * 2; });
-    var e = ReactiveFunction(a, b, c, function (a, b, c){ return a + b + c; });
+    var d = ReactiveFunction(function (a){
+      return a * 2;
+    }, a);
+
+    var e = ReactiveFunction(function (a, b, c){
+      return a + b + c;
+    }, a, b, c);
 
     ReactiveFunction.digest();
 
@@ -35,8 +42,15 @@ describe("ReactiveFunction", function() {
 
   it("Should depend on a reactive function.", function () {
     var a = ReactiveProperty(5);
-    var b = ReactiveFunction(a, function (a){ return a * 2; });
-    var c = ReactiveFunction(b, function (b){ return b / 2; });
+
+    var b = ReactiveFunction(function (a){
+      return a * 2;
+    }, a);
+
+    var c = ReactiveFunction(function (b){
+      return b / 2;
+    }, b);
+
     ReactiveFunction.digest();
     assert.equal(c(), 5);
   });
@@ -44,8 +58,15 @@ describe("ReactiveFunction", function() {
   it("Should depend on a reactive property and a reactive function.", function () {
     var a = ReactiveProperty(5);
     var b = ReactiveProperty(10);
-    var c = ReactiveFunction(a, function (a){ return a * 2; });
-    var d = ReactiveFunction(b, c, function (b, c){ return b + c; });
+
+    var c = ReactiveFunction(function (a){
+      return a * 2;
+    }, a);
+
+    var d = ReactiveFunction(function (b, c){
+      return b + c;
+    }, b, c);
+
     ReactiveFunction.digest();
     assert.equal(d(), 20);
   });
@@ -59,17 +80,24 @@ describe("ReactiveFunction", function() {
     //     \ /
     //      e   
     var a = ReactiveProperty(5);
-    var b = ReactiveFunction(a, function (a){ return a * 2; });
-    var c = ReactiveFunction(b, function (b){ return b + 5; });
-    var d = ReactiveFunction(a, function (a){ return a * 3; });
-    var e = ReactiveFunction(c, d, function (c, d){ return c + d; });
+
+    var b = ReactiveFunction(function (a){ return a * 2; }, a);
+    var c = ReactiveFunction(function (b){ return b + 5; }, b);
+    var d = ReactiveFunction(function (a){ return a * 3; }, a);
+    var e = ReactiveFunction(function (c, d){ return c + d; }, c, d);
+
     ReactiveFunction.digest();
+
     assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
   });
 
   it("Should throw an error if attempting to set the value directly.", function () {
     var a = ReactiveProperty(5);
-    var b = ReactiveFunction(a, function (a){ return a * 2; });
+
+    var b = ReactiveFunction(function (a){
+      return a * 2;
+    }, a);
+
     assert.throws(function (){
       b(5);
     });
@@ -78,10 +106,10 @@ describe("ReactiveFunction", function() {
   it("Should clear changed nodes on digest.", function () {
     var numInvocations = 0;
     var a = ReactiveProperty(5);
-    var b = ReactiveFunction(a, function (a){
+    var b = ReactiveFunction(function (a){
       numInvocations++;
       return a * 2;
-    });
+    }, a);
     ReactiveFunction.digest();
     ReactiveFunction.digest();
     assert.equal(numInvocations, 1);
@@ -91,9 +119,9 @@ describe("ReactiveFunction", function() {
     var a = ReactiveProperty(5);
     var b = ReactiveProperty(10);
 
-    var c = ReactiveFunction(a, b, function (a, b){
+    var c = ReactiveFunction(function (a, b){
       return a + b;
-    });
+    }, a, b);
 
     setTimeout(function (){
       assert.equal(c(), 15);
