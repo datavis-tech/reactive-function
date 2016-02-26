@@ -3,6 +3,12 @@ A library for managing data flows and changing state.
 
 # Usage
 
+If you are using NPM, install this package with:
+
+`npm install reactive-function`
+
+Require it in your code like this:
+
 ```javascript
 var ReactiveFunction = require("reactive-function");
 ```
@@ -13,21 +19,36 @@ This library is designed to function with instances of [reactive-property](https
 var ReactiveProperty = require("reactive-property");
 ```
 
+Let's say you have two reactive properties to represent someone's name.
+
+```javascript
+var firstName = ReactiveProperty("Jane");
+var lastName = ReactiveProperty("Smith");
+```
+
+You can define a reactive function that depends on those two properties.
+
+```javascript
+var fullName = ReactiveFunction(function (first, last){
+  return first + " " + last;
+}, firstName, lastName);
+```
+
+To synchronously evaluate the data dependency graph, invoke the `digest` function.
+
+```javascript
+ReactiveFunction.digest();
+```
+
+Now, you can access the value of the reactive function as a getter.
+
+```javascript
+console.log(fullName()); // Prints "Jane Smith"
+```
+
 Here's some sample code from the tests that demonstrates the features of this library.
 
 ```javascript
-it("Should depend on two reactive properties.", function () {
-  var a = ReactiveProperty(5);
-  var b = ReactiveProperty(10);
-
-  var c = ReactiveFunction(function (a, b){
-    return a + b;
-  }, a, b);
-
-  ReactiveFunction.digest();
-  assert.equal(c(), 15);
-});
-
 it("Should depend on any number of reactive properties.", function () {
   var a = ReactiveProperty(5);
   var b = ReactiveProperty(10);
@@ -135,18 +156,6 @@ it("Should automatically digest on next tick.", function (done) {
     done();
   }, 0);
 });
-```
-
-# Installation
-
-If you are using NPM:
-
-`npm install reactive-function`
-
-Require it in your code like this:
-
-```javascript
-var ReactiveFunction = require("reactive-function");
 ```
 
 # Case Study: Width and Height
