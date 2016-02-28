@@ -128,4 +128,47 @@ describe("ReactiveFunction", function() {
       done();
     }, 0);
   });
+
+  it("Should remove listeners on destroy", function (done){
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+
+    var c = ReactiveFunction(function (a, b){
+      return a + b;
+    }, a, b);
+
+    setTimeout(function (){
+
+      c.destroy();
+
+      // Without the call to destroy(), this would trigger a digest.
+      a(20);
+      setTimeout(function (){
+
+        // Confirm that a digest did not happen.
+        assert.equal(c(), 15);
+
+        done();
+      }, 0);
+    }, 0);
+  });
+
+  it("Should remove edges on destroy", function (){
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+
+    var c = ReactiveFunction(function (a, b){
+      return a + b;
+    }, a, b);
+
+    ReactiveFunction.digest();
+    assert.equal(c(), 15);
+
+    c.destroy();
+
+    a(20);
+
+    ReactiveFunction.digest();
+    assert.equal(c(), 15);
+  });
 });

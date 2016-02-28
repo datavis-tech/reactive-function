@@ -84,13 +84,11 @@ function ReactiveFunction(){
   // Garbage collection is not enough, as we have added listeners and edges.
   reactiveFunction.destroy = function (){
 
-    // TODO test
     // Remove change listeners from dependencies that are properties.
     listeners.forEach(function (listener, i){
       properties[i].off(listener);
     });
 
-    // TODO test
     // Remove the edges that were added to the dependency graph.
     dependencies.forEach(function (dependency){
       graph.removeEdge(dependency.id, reactiveFunction.id);
