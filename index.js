@@ -58,11 +58,14 @@ function ReactiveFunction(){
 
   // This gets invoked during a digest, after dependencies have been evaluated.
   reactiveFunction.evaluate = function (){
-  
-    // TODO add condition that all dependency values are defined.
-    value = callback.apply(null, dependencies.map(function (dependency){
+
+    var values = dependencies.map(function (dependency){
       return dependency();
-    }));
+    });
+
+    if(defined(values)){
+      value = callback.apply(null, values);
+    }
   };
 
   // Assign node ids to dependencies and the reactive function.
@@ -136,5 +139,12 @@ function debounce(fn){
     timeout = setTimeout(fn)
   };
 };
+
+// Returns true if all elements of the given array are defined.
+function defined(arr){
+  return !arr.some(function (d){
+    return typeof d === "undefined" || d === null;
+  });
+}
 
 module.exports = ReactiveFunction;

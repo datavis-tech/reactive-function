@@ -129,7 +129,7 @@ describe("ReactiveFunction", function() {
     }, 0);
   });
 
-  it("Should remove listeners on destroy", function (done){
+  it("Should remove listeners on destroy.", function (done){
     var a = ReactiveProperty(5);
     var b = ReactiveProperty(10);
 
@@ -153,7 +153,7 @@ describe("ReactiveFunction", function() {
     }, 0);
   });
 
-  it("Should remove edges on destroy", function (){
+  it("Should remove edges on destroy.", function (){
     var a = ReactiveProperty(5);
     var b = ReactiveProperty(10);
 
@@ -170,5 +170,29 @@ describe("ReactiveFunction", function() {
 
     ReactiveFunction.digest();
     assert.equal(c(), 15);
+  });
+
+  it("Should not invoke if a dependency is undefined.", function (){
+    var numInvocations = 0;
+    var a = ReactiveProperty();
+    var b = ReactiveProperty(10);
+    ReactiveFunction(function (a, b){
+      console.log(a);
+      numInvocations++;
+    }, a, b);
+    ReactiveFunction.digest();
+    assert.equal(numInvocations, 0);
+  });
+
+  it("Should not invoke if a dependency is null.", function (){
+    var numInvocations = 0;
+    var a = ReactiveProperty(null);
+    var b = ReactiveProperty(10);
+    ReactiveFunction(function (a, b){
+      console.log(a);
+      numInvocations++;
+    }, a, b);
+    ReactiveFunction.digest();
+    assert.equal(numInvocations, 0);
   });
 });
