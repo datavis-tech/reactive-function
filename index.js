@@ -40,17 +40,26 @@ function ReactiveFunction(){
   var dependencies = args.splice(1);
   var callback = args[0];
 
+  // TODO check for correct type for dependencies
+  // TODO check for correct type for callback
+
   // This stores the output value.
   var value;
 
   // The returned reactive function acts as a getter (not a setter).
   var reactiveFunction = function (){
-    if(arguments.length > 0){ throw errors.notASetter; }
+
+    if(arguments.length > 0){
+      throw errors.notASetter;
+    }
+
     return value;
   };
 
   // This gets invoked during a digest, after dependencies have been evaluated.
   reactiveFunction.evaluate = function (){
+  
+    // TODO add condition that all dependency values are defined.
     value = callback.apply(null, dependencies.map(function (dependency){
       return dependency();
     }));
