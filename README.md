@@ -13,7 +13,7 @@ Require it in your code like this:
 var ReactiveFunction = require("reactive-function");
 ```
 
-This library is designed to function with instances of [reactive-property](https://github.com/curran/reactive-property), so you'll need to require that too.
+This library is designed to work with [reactive-property](https://github.com/curran/reactive-property), you'll need that too.
 
 ```javascript
 var ReactiveProperty = require("reactive-property");
@@ -26,7 +26,7 @@ var firstName = ReactiveProperty("Jane");
 var lastName = ReactiveProperty("Smith");
 ```
 
-You can define a reactive function that depends on those two properties.
+You can define a reactive function that depends on those two properties like this.
 
 ```javascript
 var fullName = ReactiveFunction(function (first, last){
@@ -34,13 +34,15 @@ var fullName = ReactiveFunction(function (first, last){
 }, firstName, lastName);
 ```
 
-To synchronously evaluate the data dependency graph, invoke the `digest` function.
+This defines a "reactive function" that will be invoked when its dependencies (`firstName` and `lastName`) are both defined and whenever either one changes. The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
+
+To force a synchronous evaluation of all reactive functions whose dependencies have updated, you can call:
 
 ```javascript
 ReactiveFunction.digest();
 ```
 
-Now, you can access the value of the reactive function as a getter.
+Now you can access the computed value of the reactive function by invoking it.
 
 ```javascript
 console.log(fullName()); // Prints "Jane Smith"
