@@ -91,6 +91,9 @@ function ReactiveFunction(options){
       graph.removeEdge(input.id, output.id);
     });
 
+    // Remove the reference to the 'evaluate' function.
+    delete output.evaluate;
+
   };
 
   return reactiveFunction;

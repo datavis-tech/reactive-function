@@ -332,4 +332,25 @@ describe("ReactiveFunction", function() {
     assert.equal(a(), 100);
 
   });
+
+  it("Should remove the 'evaluate' function from the output on destroy.", function (){
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+    var c = ReactiveProperty();
+
+    var rf = ReactiveFunction({
+      inputs: [a, b],
+      output: c,
+      callback: function (a, b){
+        return a + b;
+      }
+    });
+
+    assert.equal(typeof c.evaluate, "function");
+
+    rf.destroy();
+
+    assert.equal(typeof c.evaluate, "undefined");
+
+  });
 });
