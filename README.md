@@ -71,3 +71,6 @@ For more detailed example code, have a look at the [tests](https://github.com/cu
 Related work:
 
  * [ReactiveJS](https://github.com/mattbaker/Reactive.js)
+ * [EmberJS Computed Properties](https://guides.emberjs.com/v2.0.0/object-model/computed-properties/)
+ * [ZJONSSON/clues](https://github.com/ZJONSSON/clues)
+ * [Model.js](https://github.com/curran/model)
