@@ -138,12 +138,19 @@ describe("ReactiveFunction", function() {
     assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
   });
 
+  // Not sure if this is really necessary.
+  // It would be a nice safeguard but would clutter the code.
   //it("Should throw an error if attempting to set the value directly.", function () {
   //  var a = ReactiveProperty(5);
+  //  var b = ReactiveProperty();
 
-  //  var b = ReactiveFunction(function (a){
-  //    return a * 2;
-  //  }, a);
+  //  ReactiveFunction({
+  //    inputs: [a],
+  //    output: b,
+  //    callback: function (a){
+  //      return a * 2;
+  //    }
+  //  });
 
   //  assert.throws(function (){
   //    b(5);

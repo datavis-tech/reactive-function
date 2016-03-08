@@ -16,7 +16,8 @@ var graph = Graph();
 var changedNodes = {};
 
 
-// A lookup table for properties based on their assigned id.
+// A map for properties based on their assigned id.
+// Keys are property ids, values are reactive properties.
 var propertiesById = {};
 
 // Assigns ids to properties for use as nodes in the graph.
@@ -52,6 +53,7 @@ function ReactiveFunction(options){
     if(defined(values)){
       output(callback.apply(null, values));
     }
+
   };
 
   // Assign node ids to inputs and the reactive function.
