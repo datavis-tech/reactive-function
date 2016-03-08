@@ -19,22 +19,40 @@ This library is designed to work with [reactive-property](https://github.com/cur
 var ReactiveProperty = require("reactive-property");
 ```
 
-Let's say you have two reactive properties to represent someone's name.
+Suppose you have two reactive properties to represent someone's first and last name.
 
 ```javascript
 var firstName = ReactiveProperty("Jane");
 var lastName = ReactiveProperty("Smith");
 ```
 
-You can define a reactive function that depends on those two properties like this.
+Suppose you'd like to have another property that represents the full name of the person.
 
 ```javascript
-var fullName = ReactiveFunction(function (first, last){
-  return first + " " + last;
-}, firstName, lastName);
+var fullName = ReactiveProperty();
 ```
 
-This defines a "reactive function" that will be invoked when its dependencies (`firstName` and `lastName`) are both defined and whenever either one changes. The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
+You could set the full name value like this.
+
+```javascript
+fullName(firstName() + " " + lastName());
+```
+
+However, this sets the value of `fullName` only once, and it does not get updated when `firstName` or `lastName` change.
+
+Here's how you can define a reactive function that updates the full name whenever the first name or last name changes.
+
+```javascript
+ReactiveFunction({
+  inputs: [firstName, lastName],
+  output: lastName,
+  callback: function (first, last){
+    return first + " " last;
+  }
+});
+```
+
+This defines a "reactive function" that will be invoked when its inputs (`firstName` and `lastName`) are both defined and whenever either one changes. The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
 
 To force a synchronous evaluation of all reactive functions whose dependencies have updated, you can call:
 
@@ -42,147 +60,13 @@ To force a synchronous evaluation of all reactive functions whose dependencies h
 ReactiveFunction.digest();
 ```
 
-Now you can access the computed value of the reactive function by invoking it.
+Now you can access the computed value of the reactive function by invoking it as a getter.
 
 ```javascript
 console.log(fullName()); // Prints "Jane Smith"
 ```
 
-Here's some sample code from the tests that demonstrates the features of this library.
-
-```javascript
-it("Should depend on any number of reactive properties.", function () {
-  var a = ReactiveProperty(5);
-  var b = ReactiveProperty(10);
-  var c = ReactiveProperty(15);
-
-  var d = ReactiveFunction(function (a){
-    return a * 2;
-  }, a);
-
-  var e = ReactiveFunction(function (a, b, c){
-    return a + b + c;
-  }, a, b, c);
-
-  ReactiveFunction.digest();
-
-  assert.equal(d(), 10);
-  assert.equal(e(), 30);
-});
-
-it("Should depend on a reactive function.", function () {
-  var a = ReactiveProperty(5);
-
-  var b = ReactiveFunction(function (a){
-    return a * 2;
-  }, a);
-
-  var c = ReactiveFunction(function (b){
-    return b / 2;
-  }, b);
-
-  ReactiveFunction.digest();
-  assert.equal(c(), 5);
-});
-
-it("Should depend on a reactive property and a reactive function.", function () {
-  var a = ReactiveProperty(5);
-  var b = ReactiveProperty(10);
-
-  var c = ReactiveFunction(function (a){
-    return a * 2;
-  }, a);
-
-  var d = ReactiveFunction(function (b, c){
-    return b + c;
-  }, b, c);
-
-  ReactiveFunction.digest();
-  assert.equal(d(), 20);
-});
-
-it("Should handle tricky case.", function () {
-  //      a
-  //     / \
-  //    b   |
-  //    |   d
-  //    c   |
-  //     \ /
-  //      e   
-  var a = ReactiveProperty(5);
-
-  var b = ReactiveFunction(function (a){ return a * 2; }, a);
-  var c = ReactiveFunction(function (b){ return b + 5; }, b);
-  var d = ReactiveFunction(function (a){ return a * 3; }, a);
-  var e = ReactiveFunction(function (c, d){ return c + d; }, c, d);
-
-  ReactiveFunction.digest();
-
-  assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
-});
-
-it("Should throw an error if attempting to set the value directly.", function () {
-  var a = ReactiveProperty(5);
-
-  var b = ReactiveFunction(function (a){
-    return a * 2;
-  }, a);
-
-  assert.throws(function (){
-    b(5);
-  });
-});
-
-it("Should clear changed nodes on digest.", function () {
-  var numInvocations = 0;
-  var a = ReactiveProperty(5);
-  var b = ReactiveFunction(function (a){
-    numInvocations++;
-    return a * 2;
-  }, a);
-  ReactiveFunction.digest();
-  ReactiveFunction.digest();
-  assert.equal(numInvocations, 1);
-});
-
-it("Should automatically digest on next tick.", function (done) {
-  var a = ReactiveProperty(5);
-  var b = ReactiveProperty(10);
-
-  var c = ReactiveFunction(function (a, b){
-    return a + b;
-  }, a, b);
-
-  setTimeout(function (){
-    assert.equal(c(), 15);
-    done();
-  }, 0);
-});
-```
-
-# Case Study: Width and Height
-
-Suppose you have some reactive properties that change, such as `width` and `height`.
-
-```javascript
-var my = {
-  width: ReactiveProperty(),
-  height: ReactiveProperty()
-};
-```
-
-Suppose also that you have a function that resizes an SVG element that depends on those two properties.
-
-```javascript
-var svg = d3.select("body").append("svg");
-function render(){
-  svg
-    .attr("width", my.width())
-    .attr("height", my.height());
-}
-```
-
-How can you invoke the `render function` when `my.width` and `my.height` change?
+For more detailed example code, have a look at the [tests](https://github.com/curran/reactive-function/blob/master/test.js).
 
 Related work:
 
