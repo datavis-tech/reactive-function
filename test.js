@@ -289,4 +289,47 @@ describe("ReactiveFunction", function() {
     ReactiveFunction.digest();
     assert.equal(numInvocations, 0);
   });
+
+  it("Should be able to implement unidirectional data binding.", function (){
+
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+
+    ReactiveFunction({
+      inputs: [a],
+      output: b,
+      callback: function (a){
+        return a;
+      }
+    });
+
+    ReactiveFunction.digest();
+
+    assert.equal(b(), 5);
+  });
+
+  it("Should be able to implement bidirectional data binding.", function (){
+
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+
+    function identity(x){ return x; }
+
+    ReactiveFunction({ inputs: [a], output: b, callback: identity });
+    ReactiveFunction({ inputs: [b], output: a, callback: identity });
+
+    ReactiveFunction.digest();
+
+    // The most recently added edge takes precedence.
+    assert.equal(b(), 10);
+
+    a(50);
+    ReactiveFunction.digest();
+    assert.equal(b(), 50);
+
+    b(100);
+    ReactiveFunction.digest();
+    assert.equal(a(), 100);
+
+  });
 });

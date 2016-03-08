@@ -15,18 +15,17 @@ var graph = Graph();
 // Keys are node ids, values are truthy (the object acts like a Set).
 var changedNodes = {};
 
-
 // A map for properties based on their assigned id.
 // Keys are property ids, values are reactive properties.
-var propertiesById = {};
+var properties = {};
 
 // Assigns ids to properties for use as nodes in the graph.
 var assignId = (function(){
-  var idCounter = 1;
+  var counter = 1;
   return function (property){
     if(!property.id){
-      property.id = idCounter++;
-      propertiesById[property.id] = property;
+      property.id = counter++;
+      properties[property.id] = property;
     }
   };
 }());
@@ -46,11 +45,15 @@ function ReactiveFunction(options){
   // This gets invoked during a digest, after inputs have been evaluated.
   output.evaluate = function (){
 
+    // Get the values for each of the input reactive properties.
     var values = inputs.map(function (input){
       return input();
     });
 
+    // If all input values are defined,
     if(defined(values)){
+
+      // invoke the callback and assign the output value.
       output(callback.apply(null, values));
     }
 
@@ -99,7 +102,7 @@ ReactiveFunction.digest = function (){
   graph
     .topologicalSort(Object.keys(changedNodes))
     .map(function (id){
-      return propertiesById[id];
+      return properties[id];
     })
     .forEach(function (property){
       property.evaluate();
@@ -114,7 +117,8 @@ var queueDigest = debounce(ReactiveFunction.digest);
 // Returns a function that, when invoked, schedules the given function
 // to execute on the next tick of the JavaScript event loop.
 // Multiple sequential executions of the returned function within the same tick of
-// the event loop will collapse into a single invocation of the original function.
+// the event loop will collapse into a single invocation of the original function
+// on the next tick.
 // Similar to http://underscorejs.org/#debounce
 function debounce(fn){
   var timeout;
