@@ -1,4 +1,7 @@
-# reactive-function
+# reactive-function [![Build Status](https://travis-ci.org/curran/reactive-function.svg?branch=master)](https://travis-ci.org/curran/reactive-function)
+
+[![NPM](https://nodei.co/npm/reactive-function.png)](https://npmjs.org/package/reactive-function)
+
 A library for managing data flows and changing state.
 
 # Usage
