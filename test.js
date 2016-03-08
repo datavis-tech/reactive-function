@@ -150,31 +150,43 @@ describe("ReactiveFunction", function() {
   //  });
   //});
 
-  //it("Should clear changed nodes on digest.", function () {
-  //  var numInvocations = 0;
-  //  var a = ReactiveProperty(5);
-  //  var b = ReactiveFunction(function (a){
-  //    numInvocations++;
-  //    return a * 2;
-  //  }, a);
-  //  ReactiveFunction.digest();
-  //  ReactiveFunction.digest();
-  //  assert.equal(numInvocations, 1);
-  //});
+  it("Should clear changed nodes on digest.", function () {
+    var numInvocations = 0;
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty();
 
-  //it("Should automatically digest on next tick.", function (done) {
-  //  var a = ReactiveProperty(5);
-  //  var b = ReactiveProperty(10);
+    ReactiveFunction({
+      inputs: [a],
+      output: b,
+      callback: function (a){
+        numInvocations++;
+        return a * 2;
+      }
+    });
 
-  //  var c = ReactiveFunction(function (a, b){
-  //    return a + b;
-  //  }, a, b);
+    ReactiveFunction.digest();
+    ReactiveFunction.digest();
+    assert.equal(numInvocations, 1);
+  });
 
-  //  setTimeout(function (){
-  //    assert.equal(c(), 15);
-  //    done();
-  //  }, 0);
-  //});
+  it("Should automatically digest on next tick.", function (done) {
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+    var c = ReactiveProperty();
+
+    ReactiveFunction({
+      inputs: [a, b],
+      output: c,
+      callback: function (a, b){
+        return a + b;
+      }
+    });
+
+    setTimeout(function (){
+      assert.equal(c(), 15);
+      done();
+    }, 0);
+  });
 
   //it("Should remove listeners on destroy.", function (done){
   //  var a = ReactiveProperty(5);
