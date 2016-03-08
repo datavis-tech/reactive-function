@@ -30,61 +30,41 @@ var assignId = (function(){
   };
 }());
 
-//ReactiveFunction(dependencies... , callback)
-function ReactiveFunction(){
+function ReactiveFunction(options){
 
-  // TODO check for wrong number of args
+  var inputs = options.inputs;
+  var callback = options.callback;
+  var output = options.output;
 
-  // Parse arguments.
-  var args = Array.apply(null, arguments);
-  var dependencies = args.splice(1);
-  var callback = args[0];
-
-  // TODO check for correct type for dependencies
+  // TODO check for correct type for inputs
   // TODO check for correct type for callback
 
-  // This stores the output value.
-  var value;
-
   // The returned reactive function acts as a getter (not a setter).
-  var reactiveFunction = function (){
+  var reactiveFunction = {};
 
-    if(arguments.length > 0){
-      throw errors.notASetter;
-    }
+  // This gets invoked during a digest, after inputs have been evaluated.
+  output.evaluate = function (){
 
-    return value;
-  };
-
-  // This gets invoked during a digest, after dependencies have been evaluated.
-  reactiveFunction.evaluate = function (){
-
-    var values = dependencies.map(function (dependency){
-      return dependency();
+    var values = inputs.map(function (input){
+      return input();
     });
 
     if(defined(values)){
-      value = callback.apply(null, values);
+      output(callback.apply(null, values));
     }
   };
 
-  // Assign node ids to dependencies and the reactive function.
-  assignId(reactiveFunction);
-  dependencies.forEach(assignId);
+  // Assign node ids to inputs and the reactive function.
+  assignId(output);
+  inputs.forEach(assignId);
 
-  // Set up edges in the graph from each dependency.
-  dependencies.forEach(function (dependency){
-    graph.addEdge(dependency.id, reactiveFunction.id);
+  // Set up edges in the graph from each input.
+  inputs.forEach(function (input){
+    graph.addEdge(input.id, output.id);
   });
 
-  // Compute which of the dependencies are properties (excludes reactive functions).
-  var properties = dependencies
-    .filter(function (dependency){
-      return dependency.on;
-    });
-
-  // Add change listeners to each dependency that is a property.
-  var listeners = properties
+  // Add change listeners to each input property.
+  var listeners = inputs
     .map(function (property){
       return property.on(function (){
         changedNodes[property.id] = true;
@@ -96,14 +76,14 @@ function ReactiveFunction(){
   // Garbage collection is not enough, as we have added listeners and edges.
   reactiveFunction.destroy = function (){
 
-    // Remove change listeners from dependencies that are properties.
+    // Remove change listeners from inputs.
     listeners.forEach(function (listener, i){
       properties[i].off(listener);
     });
 
     // Remove the edges that were added to the dependency graph.
-    dependencies.forEach(function (dependency){
-      graph.removeEdge(dependency.id, reactiveFunction.id);
+    inputs.forEach(function (input){
+      graph.removeEdge(input.id, output.id);
     });
 
   };
