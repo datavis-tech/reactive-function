@@ -54,7 +54,7 @@ ReactiveFunction({
 
 This defines a "reactive function" that will be invoked when its inputs (`firstName` and `lastName`) are both defined and whenever either one changes. The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
 
-To force a synchronous evaluation of all reactive functions whose dependencies have updated, you can call:
+To force a synchronous evaluation of all reactive functions whose dependencies have updated, you can call
 
 ```javascript
 ReactiveFunction.digest();
@@ -72,5 +72,6 @@ Related work:
 
  * [ReactiveJS](https://github.com/mattbaker/Reactive.js)
  * [EmberJS Computed Properties](https://guides.emberjs.com/v2.0.0/object-model/computed-properties/)
+ * [AngularJS Digest](https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$digest)
  * [ZJONSSON/clues](https://github.com/ZJONSSON/clues)
  * [Model.js](https://github.com/curran/model)
