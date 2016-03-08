@@ -78,7 +78,7 @@ function ReactiveFunction(options){
 
     // Remove change listeners from inputs.
     listeners.forEach(function (listener, i){
-      properties[i].off(listener);
+      inputs[i].off(listener);
     });
 
     // Remove the edges that were added to the dependency graph.
@@ -93,14 +93,16 @@ function ReactiveFunction(options){
 
 // Propagates changes through the dependency graph.
 ReactiveFunction.digest = function (){
+
   graph
     .topologicalSort(Object.keys(changedNodes))
     .map(function (id){
       return propertiesById[id];
     })
-    .forEach(function (reactiveFunction){
-      reactiveFunction.evaluate();
+    .forEach(function (property){
+      property.evaluate();
     });
+
   changedNodes = {};
 };
 

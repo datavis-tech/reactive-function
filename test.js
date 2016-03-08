@@ -188,70 +188,98 @@ describe("ReactiveFunction", function() {
     }, 0);
   });
 
-  //it("Should remove listeners on destroy.", function (done){
-  //  var a = ReactiveProperty(5);
-  //  var b = ReactiveProperty(10);
+  it("Should remove listeners on destroy.", function (done){
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+    var c = ReactiveProperty();
 
-  //  var c = ReactiveFunction(function (a, b){
-  //    return a + b;
-  //  }, a, b);
+    var rf = ReactiveFunction({
+      inputs: [a, b],
+      output: c,
+      callback: function (a, b){
+        return a + b;
+      }
+    });
 
-  //  setTimeout(function (){
+    // Wait until after the first auto-digest.
+    setTimeout(function (){
 
-  //    c.destroy();
+      rf.destroy();
 
-  //    // Without the call to destroy(), this would trigger a digest.
-  //    a(20);
-  //    setTimeout(function (){
+      // Without the call to destroy(), this would trigger a digest.
+      a(20);
 
-  //      // Confirm that a digest did not happen.
-  //      assert.equal(c(), 15);
+      // Give time for an auto-digest to occur.
+      setTimeout(function (){
 
-  //      done();
-  //    }, 0);
-  //  }, 0);
-  //});
+        // Confirm that a digest did not occur.
+        assert.equal(c(), 15);
 
-  //it("Should remove edges on destroy.", function (){
-  //  var a = ReactiveProperty(5);
-  //  var b = ReactiveProperty(10);
+        done();
+      }, 0);
+    }, 0);
+  });
 
-  //  var c = ReactiveFunction(function (a, b){
-  //    return a + b;
-  //  }, a, b);
+  it("Should remove edges on destroy.", function (){
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+    var c = ReactiveProperty();
 
-  //  ReactiveFunction.digest();
-  //  assert.equal(c(), 15);
+    var rf = ReactiveFunction({
+      inputs: [a, b],
+      output: c,
+      callback: function (a, b){
+        return a + b;
+      }
+    });
 
-  //  c.destroy();
+    ReactiveFunction.digest();
 
-  //  a(20);
+    assert.equal(c(), 15);
 
-  //  ReactiveFunction.digest();
-  //  assert.equal(c(), 15);
-  //});
+    rf.destroy();
 
-  //it("Should not invoke if a dependency is undefined.", function (){
-  //  var numInvocations = 0;
-  //  var a = ReactiveProperty();
-  //  var b = ReactiveProperty(10);
-  //  ReactiveFunction(function (a, b){
-  //    console.log(a);
-  //    numInvocations++;
-  //  }, a, b);
-  //  ReactiveFunction.digest();
-  //  assert.equal(numInvocations, 0);
-  //});
+    a(20);
 
-  //it("Should not invoke if a dependency is null.", function (){
-  //  var numInvocations = 0;
-  //  var a = ReactiveProperty(null);
-  //  var b = ReactiveProperty(10);
-  //  ReactiveFunction(function (a, b){
-  //    console.log(a);
-  //    numInvocations++;
-  //  }, a, b);
-  //  ReactiveFunction.digest();
-  //  assert.equal(numInvocations, 0);
-  //});
+    ReactiveFunction.digest();
+    assert.equal(c(), 15);
+  });
+
+  it("Should not invoke if an input is undefined.", function (){
+    var numInvocations = 0;
+    var a = ReactiveProperty();
+    var b = ReactiveProperty(10);
+    var c = ReactiveProperty();
+
+    ReactiveFunction({
+      inputs: [a, b],
+      output: c,
+      callback: function (a, b){
+        numInvocations++;
+        return a + b;
+      }
+    });
+
+    ReactiveFunction.digest();
+    assert.equal(numInvocations, 0);
+  });
+
+  it("Should not invoke if an input is null.", function (){
+    var numInvocations = 0;
+    var a = ReactiveProperty(null);
+    var b = ReactiveProperty(10);
+    var c = ReactiveProperty();
+
+    ReactiveFunction({
+      inputs: [a, b],
+      output: c,
+      callback: function (a, b){
+        numInvocations++;
+        return a + b;
+      }
+    });
+
+    ReactiveFunction.digest();
+    assert.equal(numInvocations, 0);
+  });
 });
