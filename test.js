@@ -369,13 +369,10 @@ describe("ReactiveFunction", function() {
     ReactiveFunction.digest();
     assert.equal(I(), 0.5);
 
-    // For some reason this breaks.
-    // It depends on the ordering.
-    // Need to investigate.
-    //V(9)
-    //I(2)
-    //ReactiveFunction.digest();
-    //assert.equal(R(), 4.5);
+    V(9)
+    I(2)
+    ReactiveFunction.digest();
+    assert.equal(R(), 4.5);
 
   });
 
