@@ -149,25 +149,6 @@ describe("ReactiveFunction", function() {
     assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
   });
 
-  // Not sure if this is really necessary.
-  // It would be a nice safeguard but would clutter the code.
-  //it("Should throw an error if attempting to set the value directly.", function () {
-  //  var a = ReactiveProperty(5);
-  //  var b = ReactiveProperty();
-
-  //  ReactiveFunction({
-  //    inputs: [a],
-  //    output: b,
-  //    callback: function (a){
-  //      return a * 2;
-  //    }
-  //  });
-
-  //  assert.throws(function (){
-  //    b(5);
-  //  });
-  //});
-
   it("Should clear changed nodes on digest.", function () {
     var numInvocations = 0;
     var a = ReactiveProperty(5);
@@ -387,6 +368,14 @@ describe("ReactiveFunction", function() {
     R(18);
     ReactiveFunction.digest();
     assert.equal(I(), 0.5);
+
+    // For some reason this breaks.
+    // It depends on the ordering.
+    // Need to investigate.
+    //V(9)
+    //I(2)
+    //ReactiveFunction.digest();
+    //assert.equal(R(), 4.5);
 
   });
 
