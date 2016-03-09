@@ -344,53 +344,52 @@ describe("ReactiveFunction", function() {
 
   });
 
-  //it("Should compute Ohm's Law.", function (){
+  it("Should compute Ohm's Law.", function (){
 
-  //  // These symbols are used in the definition of Ohm's law.
-  //  // See https://en.wikipedia.org/wiki/Ohm%27s_law
-  //  var I = ReactiveProperty();
-  //  var V = ReactiveProperty();
-  //  var R = ReactiveProperty();
+    // These symbols are used in the definition of Ohm's law.
+    // See https://en.wikipedia.org/wiki/Ohm%27s_law
+    var I = ReactiveProperty();
+    var V = ReactiveProperty();
+    var R = ReactiveProperty();
 
-  //  // I = V / R
-  //  ReactiveFunction({
-  //    inputs: [V, R],
-  //    output: I,
-  //    callback: function (v, r){ return v / r; }
-  //  });
+    // I = V / R
+    ReactiveFunction({
+      inputs: [V, R],
+      output: I,
+      callback: function (v, r){ return v / r; }
+    });
 
-  //  // V = I * R
-  //  ReactiveFunction({
-  //    inputs: [I, R],
-  //    output: V,
-  //    callback: function (i, r){ return i * r; }
-  //  });
+    // V = I * R
+    ReactiveFunction({
+      inputs: [I, R],
+      output: V,
+      callback: function (i, r){ return i * r; }
+    });
 
-  //  // R = V / I
-  //  ReactiveFunction({
-  //    inputs: [V, I],
-  //    output: R,
-  //    callback: function (v, i){ console.log("R", v, i); return v / i; }
-  //  });
+    // R = V / I
+    ReactiveFunction({
+      inputs: [V, I],
+      output: R,
+      callback: function (v, i){ return v / i; }
+    });
 
-  //  V(9);
-  //  R(18);
-////    console.log("V, R");
-  //  ReactiveFunction.digest();
-  //  //assert.equal(I(), 0.5);
+    V(9);
+    R(18);
+    ReactiveFunction.digest();
+    assert.equal(I(), 0.5);
 
-  //  console.log("af");
+    // The following cases fail as of graph-data-structure v0.3.0.
+    // Somehow the source nodes are being visited.
+    //V(9)
+    //I(2)
+    //ReactiveFunction.digest();
+    //assert.equal(R(), 4.5);
 
-  //  //V(9)
-  //  //I(2)
-  //  //ReactiveFunction.digest();
-  //  //assert.equal(R(), 4.5);
-
-  //  //R(6)
-  //  //I(2)
-  //  //ReactiveFunction.digest();
-  //  //assert.equal(V(), 12);
-  //});
+    //R(6)
+    //I(2)
+    //ReactiveFunction.digest();
+    //assert.equal(V(), 12);
+  });
 
   it("Should remove the 'evaluate' function from the output on destroy.", function (){
     var a = ReactiveProperty(5);
