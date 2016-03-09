@@ -48,7 +48,7 @@ Here's how you can define a reactive function that updates the full name wheneve
 ```javascript
 ReactiveFunction({
   inputs: [firstName, lastName],
-  output: lastName,
+  output: fullName,
   callback: function (first, last){
     return first + " " last;
   }
