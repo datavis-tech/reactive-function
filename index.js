@@ -39,7 +39,7 @@ function ReactiveFunction(options){
   // TODO check for correct type for inputs
   // TODO check for correct type for callback
 
-  // The returned reactive function acts as a getter (not a setter).
+  // The returned object.
   var reactiveFunction = {};
 
   // This gets invoked during a digest, after inputs have been evaluated.
@@ -103,7 +103,7 @@ function ReactiveFunction(options){
 ReactiveFunction.digest = function (){
 
   graph
-    .topologicalSort(Object.keys(changedNodes))
+    .topologicalSort(Object.keys(changedNodes), false)
     .map(function (id){
       return properties[id];
     })

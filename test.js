@@ -30,6 +30,10 @@ describe("ReactiveFunction", function() {
     firstName("John");
     ReactiveFunction.digest();
     assert.equal(fullName(), "John Smith");
+
+    lastName("Lennon");
+    ReactiveFunction.digest();
+    assert.equal(fullName(), "John Lennon");
   });
 
   it("Should depend on any number of reactive properties.", function () {
@@ -138,7 +142,10 @@ describe("ReactiveFunction", function() {
     ReactiveFunction({ inputs: [c, d], output: e, callback: function (c, d){ return c + d; } });
 
     ReactiveFunction.digest();
+    assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
 
+    a(10);
+    ReactiveFunction.digest();
     assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
   });
 
@@ -337,7 +344,7 @@ describe("ReactiveFunction", function() {
 
   });
 
-  //it("Should be able to implement tridirectional data binding (Ohm's Law).", function (){
+  //it("Should compute Ohm's Law.", function (){
 
   //  // These symbols are used in the definition of Ohm's law.
   //  // See https://en.wikipedia.org/wiki/Ohm%27s_law
@@ -363,19 +370,26 @@ describe("ReactiveFunction", function() {
   //  ReactiveFunction({
   //    inputs: [V, I],
   //    output: R,
-  //    callback: function (v, i){ return v / i; }
+  //    callback: function (v, i){ console.log("R", v, i); return v / i; }
   //  });
 
-  //  V(9)
-  //  R(18)
+  //  V(9);
+  //  R(18);
+////    console.log("V, R");
   //  ReactiveFunction.digest();
-  //  assert.equal(I(), 0.5);
+  //  //assert.equal(I(), 0.5);
 
-  //  V(9)
-  //  I(2)
-  //  ReactiveFunction.digest();
-  //  assert.equal(R(), 4.5);
+  //  console.log("af");
 
+  //  //V(9)
+  //  //I(2)
+  //  //ReactiveFunction.digest();
+  //  //assert.equal(R(), 4.5);
+
+  //  //R(6)
+  //  //I(2)
+  //  //ReactiveFunction.digest();
+  //  //assert.equal(V(), 12);
   //});
 
   it("Should remove the 'evaluate' function from the output on destroy.", function (){
