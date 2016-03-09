@@ -373,22 +373,21 @@ describe("ReactiveFunction", function() {
       callback: function (v, i){ return v / i; }
     });
 
+    V(9)
+    I(2)
+    ReactiveFunction.digest();
+    assert.equal(R(), 4.5);
+
+    R(6)
+    I(2)
+    ReactiveFunction.digest();
+    assert.equal(V(), 12);
+
     V(9);
     R(18);
     ReactiveFunction.digest();
     assert.equal(I(), 0.5);
 
-    // The following cases fail as of graph-data-structure v0.3.0.
-    // Somehow the source nodes are being visited.
-    //V(9)
-    //I(2)
-    //ReactiveFunction.digest();
-    //assert.equal(R(), 4.5);
-
-    //R(6)
-    //I(2)
-    //ReactiveFunction.digest();
-    //assert.equal(V(), 12);
   });
 
   it("Should remove the 'evaluate' function from the output on destroy.", function (){

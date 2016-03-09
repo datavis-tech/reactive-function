@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/curran/reactive-function#readme",
   "dependencies": {
-    "graph-data-structure": "^0.3.0",
+    "graph-data-structure": "^0.4.0",
     "reactive-property": "^0.7.0"
   },
   "devDependencies": {
