@@ -11,21 +11,21 @@ describe("ReactiveFunction", function() {
 
   it("Should depend on two reactive properties.", function () {
 
-    var a = ReactiveProperty(5);
-    var b = ReactiveProperty(10);
+    var firstName = ReactiveProperty("Jane");
+    var lastName = ReactiveProperty("Smith");
 
-    var c = ReactiveProperty();
+    var fullName = ReactiveProperty();
 
     ReactiveFunction({
-      inputs: [a, b],
-      output: c,
-      callback: function (a, b){
-        return a + b;
+      inputs: [firstName, lastName],
+      output: fullName,
+      callback: function (first, last){
+        return first + " " + last;
       }
     });
 
     ReactiveFunction.digest();
-    assert.equal(c(), 15);
+    assert.equal(fullName(), "Jane Smith");
   });
 
   it("Should depend on any number of reactive properties.", function () {

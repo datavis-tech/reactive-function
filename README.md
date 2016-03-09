@@ -50,7 +50,7 @@ ReactiveFunction({
   inputs: [firstName, lastName],
   output: fullName,
   callback: function (first, last){
-    return first + " " last;
+    return first + " " + last;
   }
 });
 ```
