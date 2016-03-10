@@ -76,6 +76,7 @@ For more detailed example code, have a look at the [tests](https://github.com/cu
 Related work:
 
  * [ReactiveJS](https://github.com/mattbaker/Reactive.js)
+ * [vogievetsky/DVL](https://github.com/vogievetsky/DVL)
  * [EmberJS Computed Properties](https://guides.emberjs.com/v2.0.0/object-model/computed-properties/)
  * [AngularJS Digest](https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$digest)
  * [ZJONSSON/clues](https://github.com/ZJONSSON/clues)
