@@ -122,6 +122,13 @@ describe("ReactiveFunction", function() {
   });
 
   it("Should handle tricky case.", function () {
+
+    // This is the case where model-js failed (https://github.com/curran/model),
+    // which cropped up as flashes of inconstistent states in Chiasm visualizations.
+    // For example, it happens when you change the X column in this example
+    // "Magic Heat Map" http://bl.ocks.org/curran/a54fc3a6578efcdc19f4
+    // This flaw in model-js is the main inspiration for making this library and using topological sort.
+    //
     //      a
     //     / \
     //    b   |
@@ -129,6 +136,7 @@ describe("ReactiveFunction", function() {
     //    c   |
     //     \ /
     //      e   
+    //
     var a = ReactiveProperty(5);
 
     var b = ReactiveProperty();

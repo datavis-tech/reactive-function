@@ -80,3 +80,5 @@ Related work:
  * [AngularJS Digest](https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$digest)
  * [ZJONSSON/clues](https://github.com/ZJONSSON/clues)
  * [Model.js](https://github.com/curran/model)
+
+Thanks to Mike Bostock and Vadim Ogievetsky for suggesting to have the ability to digest within a single tick of the event loop (the main difference between this project and the original [model-js](https://github.com/curran/model)). This idea has inspired the construction of this library, which I hope will provide a solid foundation for complex interactive visualization systems.
