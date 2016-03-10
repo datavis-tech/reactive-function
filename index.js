@@ -1,25 +1,21 @@
 var ReactiveProperty = require("reactive-property");
 var Graph = require("graph-data-structure");
 
-// Messages for exceptions thrown.
-var errors = {
-  notASetter: Error("You cannot set the value of a reactive function directly.")
-};
-
 // The singleton data dependency graph.
-// Nodes are reactive properties and reactive functions.
-// Edges represent dependencies of reactive functions.
+// Nodes are reactive properties.
+// Edges are dependencies between reactive function inputs and outputs.
 var graph = Graph();
 
 // This object accumulates nodes that have changed since the last digest.
 // Keys are node ids, values are truthy (the object acts like a Set).
-var changedNodes = {};
+var changed = {};
 
 // A map for properties based on their assigned id.
 // Keys are property ids, values are reactive properties.
 var properties = {};
 
 // Assigns ids to properties for use as nodes in the graph.
+// If the property already has an id, does nothing.
 var assignId = (function(){
   var counter = 1;
   return function (property){
@@ -30,14 +26,18 @@ var assignId = (function(){
   };
 }());
 
+// The reactive function constructor.
+// Accepts an options object with
+//  * inputs - An array of reactive properties.
+//  * callback - A function with arguments corresponding to values of inputs.
+//  * output - A reactive property.
 function ReactiveFunction(options){
+
+  // TODO validate options, throw exceptions
 
   var inputs = options.inputs;
   var callback = options.callback;
-  var output = options.output;
-
-  // TODO check for correct type for inputs
-  // TODO check for correct type for callback
+  var output = options.output || function (){};
 
   // The returned object.
   var reactiveFunction = {};
@@ -72,7 +72,7 @@ function ReactiveFunction(options){
   var listeners = inputs
     .map(function (property){
       return property.on(function (){
-        changedNodes[property.id] = true;
+        changed[property.id] = true;
         queueDigest();
       });
     });
@@ -103,7 +103,7 @@ function ReactiveFunction(options){
 ReactiveFunction.digest = function (){
 
   graph
-    .topologicalSort(Object.keys(changedNodes), false)
+    .topologicalSort(Object.keys(changed), false)
     .map(function (id){
       return properties[id];
     })
@@ -111,7 +111,7 @@ ReactiveFunction.digest = function (){
       property.evaluate();
     });
 
-  changedNodes = {};
+  changed = {};
 };
 
 // This function queues a digest at the next tick of the event loop.

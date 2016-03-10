@@ -392,8 +392,23 @@ describe("ReactiveFunction", function() {
     assert.equal(typeof c.evaluate, "function");
 
     rf.destroy();
-
     assert.equal(typeof c.evaluate, "undefined");
+  });
 
+  it("Should work without any output specified.", function (){
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+    var sideEffect = 0;
+
+    var rf = ReactiveFunction({
+      inputs: [a, b],
+      callback: function (a, b){
+        sideEffect++;
+      }
+    });
+
+    ReactiveFunction.digest();
+    assert(sideEffect);
+    
   });
 });
