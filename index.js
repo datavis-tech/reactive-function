@@ -6,16 +6,17 @@ var Graph = require("graph-data-structure");
 // Edges are dependencies between reactive function inputs and outputs.
 var graph = Graph();
 
-// This object accumulates nodes that have changed since the last digest.
-// Keys are node ids, values are truthy (the object acts like a Set).
-var changed = {};
-
-// A map for properties based on their assigned id.
+// A map for looking up properties based on their assigned id.
 // Keys are property ids, values are reactive properties.
 var properties = {};
 
-// Assigns ids to properties for use as nodes in the graph.
-// If the property already has an id, does nothing.
+// This object accumulates properties that have changed since the last digest.
+// Keys are property ids, values are truthy (the object acts like a Set).
+var changed = {};
+
+// Assigns an id to a reactive property so it can be a node in the graph.
+// Also stores a reference to the property by id in `properties`.
+// If the given property already has an id, does nothing.
 var assignId = (function(){
   var counter = 1;
   return function (property){
@@ -30,17 +31,12 @@ var assignId = (function(){
 // Accepts an options object with
 //  * inputs - An array of reactive properties.
 //  * callback - A function with arguments corresponding to values of inputs.
-//  * output - A reactive property.
+//  * output - A reactive property (optional).
 function ReactiveFunction(options){
-
-  // TODO validate options, throw exceptions
 
   var inputs = options.inputs;
   var callback = options.callback;
   var output = options.output || function (){};
-
-  // The returned object.
-  var reactiveFunction = {};
 
   // This gets invoked during a digest, after inputs have been evaluated.
   output.evaluate = function (){
@@ -69,34 +65,36 @@ function ReactiveFunction(options){
   });
 
   // Add change listeners to each input property.
-  var listeners = inputs
-    .map(function (property){
-      return property.on(function (){
-        changed[property.id] = true;
-        queueDigest();
+  // These mark the properties as changed and queue the next digest.
+  var listeners = inputs.map(function (property){
+    return property.on(function (){
+      changed[property.id] = true;
+      queueDigest();
+    });
+  });
+
+  // Return an object that can destroy the listeners and edges set up.
+  return {
+
+    // This function must be called to explicitly destroy a reactive function.
+    // Garbage collection is not enough, as we have added listeners and edges.
+    destroy: function (){
+
+      // Remove change listeners from inputs.
+      listeners.forEach(function (listener, i){
+        inputs[i].off(listener);
       });
-    });
 
-  // This function must be called to explicitly destroy a reactive function.
-  // Garbage collection is not enough, as we have added listeners and edges.
-  reactiveFunction.destroy = function (){
+      // Remove the edges that were added to the dependency graph.
+      inputs.forEach(function (input){
+        graph.removeEdge(input.id, output.id);
+      });
 
-    // Remove change listeners from inputs.
-    listeners.forEach(function (listener, i){
-      inputs[i].off(listener);
-    });
+      // Remove the reference to the 'evaluate' function.
+      delete output.evaluate;
 
-    // Remove the edges that were added to the dependency graph.
-    inputs.forEach(function (input){
-      graph.removeEdge(input.id, output.id);
-    });
-
-    // Remove the reference to the 'evaluate' function.
-    delete output.evaluate;
-
+    }
   };
-
-  return reactiveFunction;
 }
 
 // Propagates changes through the dependency graph.
@@ -118,10 +116,7 @@ ReactiveFunction.digest = function (){
 var queueDigest = debounce(ReactiveFunction.digest);
 
 // Returns a function that, when invoked, schedules the given function
-// to execute on the next tick of the JavaScript event loop.
-// Multiple sequential executions of the returned function within the same tick of
-// the event loop will collapse into a single invocation of the original function
-// on the next tick.
+// to execute once on the next tick of the JavaScript event loop.
 // Similar to http://underscorejs.org/#debounce
 function debounce(fn){
   var timeout;
