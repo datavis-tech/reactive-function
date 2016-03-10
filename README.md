@@ -4,6 +4,8 @@
 
 A library for managing data flows and changing state.
 
+Using this library, you can declaratively construct complex data dependency graphs. The propagation of changes through these graphs is managed for you using a variant of the [topological sort algorithm](https://en.wikipedia.org/wiki/Topological_sorting). This allows you to write simpler code in which each reactive function need only be concerned with its inputs and outputs. You can be confident that the functions will be executed in the correct order when their input values change, and that functions whose input values have not changed will not be executed unnecessarily.
+
 # Usage
 
 If you are using NPM, install this package with:
