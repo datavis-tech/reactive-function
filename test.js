@@ -419,4 +419,25 @@ describe("ReactiveFunction", function() {
     assert(sideEffect);
     
   });
+
+  it("Should work asynchronously.", function (done){
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+    var c = ReactiveProperty();
+
+    var rf = ReactiveFunction({
+      inputs: [a, b],
+      callback: function (a, b) {
+        setTimeout(function(){
+          c(a + b);
+        }, 10);
+      }
+    });
+
+    c.on(function(value){
+      assert.equal(value, 15);
+      done();
+    });
+    
+  });
 });
