@@ -31,7 +31,7 @@
   "homepage": "https://github.com/curran/reactive-function#readme",
   "dependencies": {
     "graph-data-structure": "^0.5.0",
-    "reactive-property": "^0.7.0"
+    "reactive-property": "^0.8.0"
   },
   "devDependencies": {
     "mocha": "^2.4.5"

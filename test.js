@@ -290,6 +290,21 @@ describe("ReactiveFunction", function() {
     assert.equal(numInvocations, 1);
   });
 
+  it("Should invoke if a single input is null.", function (){
+    var numInvocations = 0;
+    var a = ReactiveProperty(null);
+
+    ReactiveFunction({
+      inputs: [a],
+      callback: function (a, b){
+        numInvocations++;
+      }
+    });
+
+    ReactiveFunction.digest();
+    assert.equal(numInvocations, 1);
+  });
+
   it("Should be able to implement unidirectional data binding.", function (){
 
     var a = ReactiveProperty(5);
