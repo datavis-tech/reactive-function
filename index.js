@@ -128,9 +128,14 @@ function debounce(fn){
 
 // Returns true if all elements of the given array are defined.
 function defined(arr){
-  return !arr.some(function (d){
-    return typeof d === "undefined" || d === null;
-  });
+  return !arr.some(isUndefined);
+}
+
+// Returns true if the given object is undefined.
+// Returns false if the given object is some value, including null.
+// Inspired by http://ryanmorr.com/exploring-the-eternal-abyss-of-null-and-undefined/
+function isUndefined(obj){
+  return obj === void 0;
 }
 
 module.exports = ReactiveFunction;

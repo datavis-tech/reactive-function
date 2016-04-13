@@ -2,7 +2,9 @@
 
 [![NPM](https://nodei.co/npm/reactive-function.png)](https://npmjs.org/package/reactive-function)
 
-A library for managing data flows and changing state.
+ * A library for managing data flows graphs and changing state.
+ * Built on [reactive-property](https://github.com/curran/reactive-property).
+ * The foundation for [reactive-model](https://github.com/curran/reactive-model).
 
 # Usage
 
@@ -55,7 +57,7 @@ ReactiveFunction({
 });
 ```
 
-This defines a "reactive function" that will be invoked when its inputs (`firstName` and `lastName`) are both defined and whenever either one changes. The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
+This defines a "reactive function" that will be invoked when its inputs (`firstName` and `lastName`) are both defined and whenever either one changes ([`null` is considered a defined value](https://github.com/curran/reactive-function/issues/1)). The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
 
 To force a synchronous evaluation of all reactive functions whose dependencies have updated, you can call
 
