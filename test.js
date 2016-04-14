@@ -189,7 +189,7 @@ describe("ReactiveFunction", function() {
       }
     });
 
-    setTimeout(function (){
+    ReactiveFunction.nextFrame(function (){
       assert.equal(c(), 15);
       done();
     }, 0);
@@ -209,7 +209,7 @@ describe("ReactiveFunction", function() {
     });
 
     // Wait until after the first auto-digest.
-    setTimeout(function (){
+    ReactiveFunction.nextFrame(function (){
 
       rf.destroy();
 
@@ -217,7 +217,7 @@ describe("ReactiveFunction", function() {
       a(20);
 
       // Give time for an auto-digest to occur.
-      setTimeout(function (){
+      ReactiveFunction.nextFrame(function (){
 
         // Confirm that a digest did not occur.
         assert.equal(c(), 15);

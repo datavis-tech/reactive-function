@@ -1,6 +1,13 @@
 var ReactiveProperty = require("reactive-property");
 var Graph = require("graph-data-structure");
 
+// Use requestAnimationFrame if it is available.
+// Otherwise fall back to setTimeout.
+var nextFrame = setTimeout;
+if(typeof requestAnimationFrame !== 'undefined') {
+  nextFrame = requestAnimationFrame;
+}
+
 // The singleton data dependency graph.
 // Nodes are reactive properties.
 // Edges are dependencies between reactive function inputs and outputs.
@@ -55,7 +62,7 @@ function ReactiveFunction(options){
 
   };
 
-  // Assign node ids to inputs and the reactive function.
+  // Assign node ids to inputs and output.
   assignId(output);
   inputs.forEach(assignId);
 
@@ -116,15 +123,20 @@ ReactiveFunction.digest = function (){
 var queueDigest = debounce(ReactiveFunction.digest);
 
 // Returns a function that, when invoked, schedules the given function
-// to execute once on the next tick of the JavaScript event loop.
+// to execute once on the next frame.
 // Similar to http://underscorejs.org/#debounce
-function debounce(fn){
-  var timeout;
+function debounce(callback){
+  var queued = false;
   return function () {
-    clearTimeout(timeout);
-    timeout = setTimeout(fn)
+    if(!queued){
+      queued = true;
+      nextFrame(function () {
+        queued = false;
+        callback();
+      }, 0);
+    }
   };
-};
+}
 
 // Returns true if all elements of the given array are defined.
 function defined(arr){
@@ -137,5 +149,7 @@ function defined(arr){
 function isUndefined(obj){
   return obj === void 0;
 }
+
+ReactiveFunction.nextFrame = nextFrame;
 
 module.exports = ReactiveFunction;
