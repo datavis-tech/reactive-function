@@ -123,7 +123,7 @@ Digests are debounced to the next animation frame rather than the next tick beca
 
 Schedules the given function to execute on the next animation frame or next tick.
 
-This is a simple polyfill for `[requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)` that falls back to `[setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout)`. The main reason for having this is for use in the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js), which run in a Node.js environment where `requestAnimationFrame` is not available. Automatic digests are debounced against this function.
+This is a simple polyfill for [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) that falls back to [setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout). The main reason for having this is for use in the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js), which run in a Node.js environment where `requestAnimationFrame` is not available. Automatic digests are debounced against this function.
 
 ## Related Work
 
