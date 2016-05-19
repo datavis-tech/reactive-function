@@ -46,7 +46,7 @@ var reactiveFunction = ReactiveFunction({
   The data flow graph for the example code above.
 </p>
 
-Whenever `firstName` or `lastName` change, the callback defined above will be executed on the next animation frame. If you don't want to wait until the next animation frame, you can force a synchronous evaluation of the data flow graph by invoking **[digest](#digest).
+Whenever `firstName` or `lastName` change, the callback defined above will be executed on the next animation frame. If you don't want to wait until the next animation frame, you can force a synchronous evaluation of the data flow graph by invoking **[digest](#digest)**.
 
 ```javascript
 ReactiveFunction.digest();
@@ -76,6 +76,8 @@ var ReactiveFunction = require("reactive-function");
 
 This library is designed to work with [reactive-property](https://github.com/datavis-tech/reactive-property), you'll need that too.
 
+`npm install reactive-property`
+
 ```javascript
 var ReactiveProperty = require("reactive-property");
 ```
@@ -86,11 +88,11 @@ var ReactiveProperty = require("reactive-property");
 
 Construct a new reactive function. The *options* argument should have the following properties.
 
- * *inputs* - An array of **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)** instances.
- * *output* - An instance **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)**.
- * *callback* - A function whose arguments are values corresponding to *inputs*.
+ * *inputs* - The input properties. An array of **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)** instances.
+ * *output* (optional) - The output property. An instance of  **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)**.
+ * *callback* - The reactive function callback. Arguments are values extracted from *inputs*. The return value will be assigned as the value of *output* during a **[digest](#digest)**.
 
-This constructor sets up a reactive function such that *callback* be invoked when all properties in *inputs* are defined and whenever they. The *callback* function will be invoked on the **[nextFrame](#next-frame)** after inputs change.
+This constructor sets up a reactive function such that *callback* be invoked when all properties in *inputs* are defined and whenever they change. The *callback* function will be invoked on the **[nextFrame](#next-frame)** after inputs change.
 
 <a name="destroy" href="#destroy">#</a> <i>reactiveFunction</i>.<b>destroy</b>()
 
@@ -102,9 +104,7 @@ Propagates changes from input properties through the data flow graph defined by 
 
 <a name="next-frame" href="#next-frame">#</a> ReactiveFunction.<b>nextFrame</b>(<i>callback</i>)
 
-Queues the given function to execute on the next animation frame. This is a simple polyfill for `[requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)` that falls back to `[setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout)`.
-
-The main reason for having this is for use in the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js), which run in a Node.js environment where `requestAnimationFrame` is not available.
+Schedules the given function to execute on the next animation frame or next tick. This is a simple polyfill for `[requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)` that falls back to `[setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout)`. The main reason for having this is for use in the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js), which run in a Node.js environment where `requestAnimationFrame` is not available. Automatic digests are debounced against this function.
 
 ## Related Work
 
