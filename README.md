@@ -64,7 +64,7 @@ For more detailed example code, have a look at the [tests](https://github.com/da
 
 # Installing
 
-If you are using NPM, install this package with:
+If you are using [NPM](npmjs.com), install this package with:
 
 `npm install reactive-function`
 
@@ -83,9 +83,26 @@ var ReactiveProperty = require("reactive-property");
 ## API Documentation
 
 <a name="constructor" href="#constructor">#</a> <b>ReactiveFunction</b>(<i>options</i>)
-<a name="digest" href="#digest">#</a> ReactiveFunction.<b>digest</b>()
-<a name="next-frame" href="#next-frame">#</a> <i>reactiveFunction</i>.<b>nextFrame</b>(<i>callback</i>)
+
+Construct a new reactive function. The *options* argument should have the following properties.
+
+ * *inputs* - An array of **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)** instances.
+ * *output* - An instance **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)**.
+ * *callback* - A function whose arguments are values corresponding to *inputs*.
+
 <a name="destroy" href="#destroy">#</a> <i>reactiveFunction</i>.<b>destroy</b>()
+
+Cleans up resources allocated to this reactive function and removes listeners from inputs.
+
+<a name="digest" href="#digest">#</a> ReactiveFunction.<b>digest</b>()
+
+Propagates changes from input properties through the data flow graph defined by all reactive properties using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting).
+
+<a name="next-frame" href="#next-frame">#</a> ReactiveFunction.<b>nextFrame</b>(<i>callback</i>)
+
+Queues the given function to execute on the next animation frame. This is a simple polyfill for `[requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)` that falls back to `[setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout)`.
+
+The main reason for having this is for use in the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js), which run in a Node.js environment where `requestAnimationFrame` is not available.
 
 ## Related Work
 
