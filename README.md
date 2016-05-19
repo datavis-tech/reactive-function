@@ -1,28 +1,11 @@
-# reactive-function [![Build Status](https://travis-ci.org/datavis-tech/reactive-function.svg?branch=master)](https://travis-ci.org/datavis-tech/reactive-function)
+# reactive-function
 
 [![NPM](https://nodei.co/npm/reactive-function.png)](https://npmjs.org/package/reactive-function)
+[![NPM](https://nodei.co/npm-dl/reactive-function.png?months=3)](https://npmjs.org/package/reactive-function) [![Build Status](https://travis-ci.org/datavis-tech/reactive-function.svg?branch=master)](https://travis-ci.org/datavis-tech/reactive-function)
 
- * A library for managing data flows graphs and changing state.
  * Built on [reactive-property](https://github.com/datavis-tech/reactive-property).
  * The foundation for [reactive-model](https://github.com/datavis-tech/reactive-model).
 
-# Usage
-
-If you are using NPM, install this package with:
-
-`npm install reactive-function`
-
-Require it in your code like this:
-
-```javascript
-var ReactiveFunction = require("reactive-function");
-```
-
-This library is designed to work with [reactive-property](https://github.com/datavis-tech/reactive-property), you'll need that too.
-
-```javascript
-var ReactiveProperty = require("reactive-property");
-```
 
 Suppose you have two reactive properties to represent someone's first and last name.
 
@@ -72,6 +55,28 @@ console.log(fullName()); // Prints "Jane Smith"
 ```
 
 For more detailed example code, have a look at the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js).
+
+# Installing
+
+If you are using NPM, install this package with:
+
+`npm install reactive-function`
+
+Require it in your code like this:
+
+```javascript
+var ReactiveFunction = require("reactive-function");
+```
+
+This library is designed to work with [reactive-property](https://github.com/datavis-tech/reactive-property), you'll need that too.
+
+```javascript
+var ReactiveProperty = require("reactive-property");
+```
+
+## API Documentation
+
+## Addendum
 
 Related work:
 
