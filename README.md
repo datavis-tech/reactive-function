@@ -1,10 +1,10 @@
-# reactive-function [![Build Status](https://travis-ci.org/curran/reactive-function.svg?branch=master)](https://travis-ci.org/curran/reactive-function)
+# reactive-function [![Build Status](https://travis-ci.org/datavis-tech/reactive-function.svg?branch=master)](https://travis-ci.org/datavis-tech/reactive-function)
 
 [![NPM](https://nodei.co/npm/reactive-function.png)](https://npmjs.org/package/reactive-function)
 
  * A library for managing data flows graphs and changing state.
- * Built on [reactive-property](https://github.com/curran/reactive-property).
- * The foundation for [reactive-model](https://github.com/curran/reactive-model).
+ * Built on [reactive-property](https://github.com/datavis-tech/reactive-property).
+ * The foundation for [reactive-model](https://github.com/datavis-tech/reactive-model).
 
 # Usage
 
@@ -18,7 +18,7 @@ Require it in your code like this:
 var ReactiveFunction = require("reactive-function");
 ```
 
-This library is designed to work with [reactive-property](https://github.com/curran/reactive-property), you'll need that too.
+This library is designed to work with [reactive-property](https://github.com/datavis-tech/reactive-property), you'll need that too.
 
 ```javascript
 var ReactiveProperty = require("reactive-property");
@@ -57,7 +57,7 @@ ReactiveFunction({
 });
 ```
 
-This defines a "reactive function" that will be invoked when its inputs (`firstName` and `lastName`) are both defined and whenever either one changes ([`null` is considered a defined value](https://github.com/curran/reactive-function/issues/1)). The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
+This defines a "reactive function" that will be invoked when its inputs (`firstName` and `lastName`) are both defined and whenever either one changes ([`null` is considered a defined value](https://github.com/datavis-tech/reactive-function/issues/1)). The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
 
 To force a synchronous evaluation of all reactive functions whose dependencies have updated, you can call
 
@@ -71,7 +71,7 @@ Now you can access the computed value of the reactive function by invoking it as
 console.log(fullName()); // Prints "Jane Smith"
 ```
 
-For more detailed example code, have a look at the [tests](https://github.com/curran/reactive-function/blob/master/test.js).
+For more detailed example code, have a look at the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js).
 
 Related work:
 
