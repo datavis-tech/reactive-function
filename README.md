@@ -14,7 +14,7 @@ var firstName = ReactiveProperty("Jane");
 var lastName = ReactiveProperty("Smith");
 ```
 
-Suppose you'd like to have another property that represents the full name of the person.
+Another reactive property can represent the full name of the person.
 
 ```javascript
 var fullName = ReactiveProperty();
@@ -26,12 +26,12 @@ You could set the full name value like this.
 fullName(firstName() + " " + lastName());
 ```
 
-However, this sets the value of `fullName` only once, and it does not get updated when `firstName` or `lastName` change.
+However, the above code sets the value of `fullName` only once. It does not get updated when `firstName` or `lastName` change.
 
-Here's how you can define a reactive function that updates the full name whenever the first name or last name changes.
+Here's how you can define a **[ReactiveFunction](#constructor)** that automatically updates `fullName` whenever `firstName` or `lastName` change.
 
 ```javascript
-ReactiveFunction({
+var reactiveFunction = ReactiveFunction({
   inputs: [firstName, lastName],
   output: fullName,
   callback: function (first, last){
@@ -40,19 +40,18 @@ ReactiveFunction({
 });
 ```
 
-This sets up a function that will be invoked when its inputs (`firstName` and `lastName`) are both defined and whenever either one changes. The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
-
-The data flow graph defined above looks like this.
-
+<p align="center">
 <img src="https://cloud.githubusercontent.com/assets/68416/15389922/cf3f24dc-1dd6-11e6-92d6-058051b752ea.png">
+<small>The data flow graph for the example code above.</small>
+</p>
 
-To force a synchronous evaluation of all reactive functions whose dependencies have updated, you can call
+Whenever `firstName` or `lastName` change, the callback defined above will be executed on the next animation frame. If you don't want to wait until the next animation frame, you can force a synchronous evaluation of the data flow graph by invoking **[digest](#digest).
 
 ```javascript
 ReactiveFunction.digest();
 ```
 
-Now you can access the computed value of the reactive function by invoking it as a getter.
+Now you can access the computed `fullName` value by invoking it as a getter.
 
 ```javascript
 console.log(fullName()); // Prints "Jane Smith"
@@ -89,6 +88,8 @@ Construct a new reactive function. The *options* argument should have the follow
  * *inputs* - An array of **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)** instances.
  * *output* - An instance **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)**.
  * *callback* - A function whose arguments are values corresponding to *inputs*.
+
+This constructor sets up a reactive function such that *callback* be invoked when all properties in *inputs* are defined and whenever they. The *callback* function will be invoked on the **[nextFrame](#next-frame)** after inputs change.
 
 <a name="destroy" href="#destroy">#</a> <i>reactiveFunction</i>.<b>destroy</b>()
 
