@@ -7,6 +7,17 @@ A library for managing reactive data flows.
 
 This library provides the ability to define reactive data flows by modeling application state as a directed graph and using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting) to compute the order in which changes should be propagated. This library works only with stateful properties encapsulated using [reactive-property](https://github.com/datavis-tech/reactive-property). The topological sorting algorithm is implemented in another package, [graph-data-structure](https://github.com/datavis-tech/graph-data-structure).
 
+ * [Examples](#examples)
+ * [Installing](#installing)
+ * [API Reference](#api-reference)
+
+## Examples
+
+ * [Full Name](#full-name)
+ * [ABC](#abc)
+ * [Tricky Case](#tricky-case)
+
+### Full Name
 Suppose you have two reactive properties to represent someone's first and last name.
 
 ```javascript
@@ -58,11 +69,68 @@ Now you can access the computed `fullName` value by invoking it as a getter.
 console.log(fullName()); // Prints "Jane Smith"
 ```
 
+### ABC
+
+The output of one reactive function can be used as an input to another.
+
+![abc](https://cloud.githubusercontent.com/assets/68416/15385597/44a10522-1dc0-11e6-9054-2150f851db46.png)
+
+```javascript
+var a = ReactiveProperty(5);
+var b = ReactiveProperty();
+var c = ReactiveProperty();
+
+ReactiveFunction({
+  inputs: [a],
+  output: b,
+  callback: function (a){
+    return a * 2;
+  }
+});
+
+ReactiveFunction({
+  inputs: [b],
+  output: c,
+  callback: function (b){
+    return b / 2;
+  }
+});
+
+ReactiveFunction.digest();
+assert.equal(c(), 5);
+```
+
+### Tricky Case
+
+This is the case where [Model.js](https://github.com/curran/model) fails because it uses [Breadth-first Search](https://en.wikipedia.org/wiki/Breadth-first_search) to propagate changes. In this graph, propagation using breadth-first search would cause `e` to be set twice, and the first time it would be set with an *inconsistent state*. This fundamental flaw cropped up as flashes of inconstistent states in interactive visualizations. For example, it happens when you change the X column in this [Magic Heat Map](http://bl.ocks.org/curran/a54fc3a6578efcdc19f4). This flaw in Model.js is the main inspiration for making this library and using topological sort, which is the correct algorithm for propagating data flows and avoiding inconsistent states.
+
+![Tricky Case](https://cloud.githubusercontent.com/assets/68416/15400254/7f779c9a-1e08-11e6-8992-9d2362bfba63.png)
+
+```javascript
+var a = ReactiveProperty(5);
+var b = ReactiveProperty();
+var c = ReactiveProperty();
+var d = ReactiveProperty();
+var e = ReactiveProperty();
+
+ReactiveFunction({ inputs: [a],    output: b, callback: function (a){    return a * 2; } });
+ReactiveFunction({ inputs: [b],    output: c, callback: function (b){    return b + 5; } });
+ReactiveFunction({ inputs: [a],    output: d, callback: function (a){    return a * 3; } });
+ReactiveFunction({ inputs: [c, d], output: e, callback: function (c, d){ return c + d; } });
+
+ReactiveFunction.digest();
+assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
+
+a(10);
+ReactiveFunction.digest();
+assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
+```
+
 For more detailed example code, have a look at the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js).
 
 [![Build Status](https://travis-ci.org/datavis-tech/reactive-function.svg?branch=master)](https://travis-ci.org/datavis-tech/reactive-function)
 
-# Installing
+## Installing
 
 If you are using [NPM](npmjs.com), install this package with:
 
