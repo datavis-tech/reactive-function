@@ -1,11 +1,11 @@
 # reactive-function
 
+A library for managing data flows and changing state.
+
 [![NPM](https://nodei.co/npm/reactive-function.png)](https://npmjs.org/package/reactive-function)
 [![NPM](https://nodei.co/npm-dl/reactive-function.png?months=3)](https://npmjs.org/package/reactive-function) [![Build Status](https://travis-ci.org/datavis-tech/reactive-function.svg?branch=master)](https://travis-ci.org/datavis-tech/reactive-function)
 
- * Built on [reactive-property](https://github.com/datavis-tech/reactive-property).
- * The foundation for [reactive-model](https://github.com/datavis-tech/reactive-model).
-
+This library provides the ability to define reactive data flows by modeling application state as a directed graph and using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting) to compute the order in which changes should be propagated. This library works only with stateful properties encapsulated using [reactive-property](https://github.com/datavis-tech/reactive-property). The topological sorting algorithm is implemented in another package, [graph-data-structure](https://github.com/datavis-tech/graph-data-structure).
 
 Suppose you have two reactive properties to represent someone's first and last name.
 
