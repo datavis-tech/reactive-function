@@ -1,6 +1,6 @@
 # reactive-function
 
-A library for managing data flows and changing state.
+A library for managing reactive data flows.
 
 [![NPM](https://nodei.co/npm/reactive-function.png)](https://npmjs.org/package/reactive-function)
 [![NPM](https://nodei.co/npm-dl/reactive-function.png?months=3)](https://npmjs.org/package/reactive-function)
@@ -90,9 +90,22 @@ Construct a new reactive function. The *options* argument should have the follow
 
  * *inputs* - The input properties. An array of **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)** instances.
  * *output* (optional) - The output property. An instance of  **[ReactiveProperty](https://github.com/datavis-tech/reactive-property#constructor)**.
- * *callback* - The reactive function callback. Arguments are values extracted from *inputs*. The return value will be assigned as the value of *output* during a **[digest](#digest)**.
+ * *callback* - The reactive function callback. Arguments are values of *inputs*. The return value will be assigned to *output*.
 
-This constructor sets up a reactive function such that *callback* be invoked when all properties in *inputs* are defined and whenever they change. The *callback* function will be invoked on the **[nextFrame](#next-frame)** after inputs change.
+This constructor sets up a reactive function such that *callback* be invoked
+
+ * when all input properties are defined,
+ * after any input properties change,
+ * during a **[digest](#digest)**.
+
+An input property is considered "defined" if it has any value other than `undefined`. The special value `null` is considered to be defined.
+
+An input property is considered "changed" when
+
+ * the reactive function is initially set up, and
+ * whenever its value is set.
+
+Input properties for one reactive function may also be outputs of another.
 
 <a name="destroy" href="#destroy">#</a> <i>reactiveFunction</i>.<b>destroy</b>()
 
@@ -100,11 +113,17 @@ Cleans up resources allocated to this reactive function and removes listeners fr
 
 <a name="digest" href="#digest">#</a> ReactiveFunction.<b>digest</b>()
 
-Propagates changes from input properties through the data flow graph defined by all reactive properties using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting).
+Propagates changes from input properties through the data flow graph defined by all reactive properties using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting). An edge in the data flow graph corresponds to a case where the output of one reactive function is used as an input to another.
+
+Whenever any input properties for any reactive function change, **[digest](#digest)** is debounced (scheduled for invocation) on the  **[nextFrame](#next-frame)**. Because it is debounced, multiple synchronous changes to input properties collapse into a single digest invocation.
+
+Digests are debounced to the next animation frame rather than the next tick because browsers will render the page at most every animation frame (approximately 60 frames per second). This means that if DOM manipulations are triggered by reactive functions, and input properties are changed more frequently than 60 times per second (e.g. mouse or keyboard events), the DOM manipulations will only occur at most 60 times per second, not more than that.
 
 <a name="next-frame" href="#next-frame">#</a> ReactiveFunction.<b>nextFrame</b>(<i>callback</i>)
 
-Schedules the given function to execute on the next animation frame or next tick. This is a simple polyfill for `[requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)` that falls back to `[setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout)`. The main reason for having this is for use in the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js), which run in a Node.js environment where `requestAnimationFrame` is not available. Automatic digests are debounced against this function.
+Schedules the given function to execute on the next animation frame or next tick.
+
+This is a simple polyfill for `[requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)` that falls back to `[setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout)`. The main reason for having this is for use in the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js), which run in a Node.js environment where `requestAnimationFrame` is not available. Automatic digests are debounced against this function.
 
 ## Related Work
 
@@ -114,6 +133,8 @@ Schedules the given function to execute on the next animation frame or next tick
  * [AngularJS Digest](https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$digest)
  * [ZJONSSON/clues](https://github.com/ZJONSSON/clues)
  * [Model.js](https://github.com/curran/model)
+ * [RxJS - when](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/when.md)
+ * [Bacon - When](https://github.com/baconjs/bacon.js/tree/master#bacon-when)
 
 <p align="center">
   <a href="https://datavis.tech/">
