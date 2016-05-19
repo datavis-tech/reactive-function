@@ -41,8 +41,8 @@ var reactiveFunction = ReactiveFunction({
 ```
 
 <p align="center">
-<img src="https://cloud.githubusercontent.com/assets/68416/15389922/cf3f24dc-1dd6-11e6-92d6-058051b752ea.png">
-<small>The data flow graph for the example code above.</small>
+  <img src="https://cloud.githubusercontent.com/assets/68416/15389922/cf3f24dc-1dd6-11e6-92d6-058051b752ea.png">
+  <p style="font-size: 0.5em;">The data flow graph for the example code above.</p>
 </p>
 
 Whenever `firstName` or `lastName` change, the callback defined above will be executed on the next animation frame. If you don't want to wait until the next animation frame, you can force a synchronous evaluation of the data flow graph by invoking **[digest](#digest).
