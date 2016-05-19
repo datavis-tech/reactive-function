@@ -83,3 +83,10 @@ Related work:
  * [Model.js](https://github.com/curran/model)
 
 Thanks to Mike Bostock and Vadim Ogievetsky for suggesting to have the ability to digest within a single tick of the event loop (the main difference between this project and the original [model-js](https://github.com/curran/model)). This idea has inspired the construction of this library, which I hope will provide a solid foundation for complex interactive visualization systems.
+
+
+<p align="center">
+  <a href="https://datavis.tech/">
+    <img src="https://cloud.githubusercontent.com/assets/68416/15298394/a7a0a66a-1bbc-11e6-9636-367bed9165fc.png">
+  </a>
+</p>
