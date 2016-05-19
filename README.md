@@ -3,7 +3,7 @@
 A library for managing data flows and changing state.
 
 [![NPM](https://nodei.co/npm/reactive-function.png)](https://npmjs.org/package/reactive-function)
-[![NPM](https://nodei.co/npm-dl/reactive-function.png?months=3)](https://npmjs.org/package/reactive-function) [![Build Status](https://travis-ci.org/datavis-tech/reactive-function.svg?branch=master)](https://travis-ci.org/datavis-tech/reactive-function)
+[![NPM](https://nodei.co/npm-dl/reactive-function.png?months=3)](https://npmjs.org/package/reactive-function)
 
 This library provides the ability to define reactive data flows by modeling application state as a directed graph and using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting) to compute the order in which changes should be propagated. This library works only with stateful properties encapsulated using [reactive-property](https://github.com/datavis-tech/reactive-property). The topological sorting algorithm is implemented in another package, [graph-data-structure](https://github.com/datavis-tech/graph-data-structure).
 
@@ -60,6 +60,8 @@ console.log(fullName()); // Prints "Jane Smith"
 
 For more detailed example code, have a look at the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js).
 
+[![Build Status](https://travis-ci.org/datavis-tech/reactive-function.svg?branch=master)](https://travis-ci.org/datavis-tech/reactive-function)
+
 # Installing
 
 If you are using NPM, install this package with:
@@ -80,9 +82,12 @@ var ReactiveProperty = require("reactive-property");
 
 ## API Documentation
 
-## Addendum
+<a name="constructor" href="#constructor">#</a> <b>ReactiveFunction</b>(<i>options</i>)
+<a name="digest" href="#digest">#</a> ReactiveFunction.<b>digest</b>()
+<a name="next-frame" href="#next-frame">#</a> <i>reactiveFunction</i>.<b>nextFrame</b>(<i>callback</i>)
+<a name="destroy" href="#destroy">#</a> <i>reactiveFunction</i>.<b>destroy</b>()
 
-Related work:
+## Related Work
 
  * [ReactiveJS](https://github.com/mattbaker/Reactive.js)
  * [vogievetsky/DVL](https://github.com/vogievetsky/DVL)
@@ -90,9 +95,6 @@ Related work:
  * [AngularJS Digest](https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$digest)
  * [ZJONSSON/clues](https://github.com/ZJONSSON/clues)
  * [Model.js](https://github.com/curran/model)
-
-Thanks to Mike Bostock and Vadim Ogievetsky for suggesting to have the ability to digest within a single tick of the event loop (the main difference between this project and the original [model-js](https://github.com/curran/model)). This idea has inspired the construction of this library, which I hope will provide a solid foundation for complex interactive visualization systems.
-
 
 <p align="center">
   <a href="https://datavis.tech/">
