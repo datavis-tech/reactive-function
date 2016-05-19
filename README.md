@@ -40,7 +40,11 @@ ReactiveFunction({
 });
 ```
 
-This defines a "reactive function" that will be invoked when its inputs (`firstName` and `lastName`) are both defined and whenever either one changes ([`null` is considered a defined value](https://github.com/datavis-tech/reactive-function/issues/1)). The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
+This sets up a function that will be invoked when its inputs (`firstName` and `lastName`) are both defined and whenever either one changes. The function will be invoked on the next tick of the JavaScript event loop after it is defined and after any dependencies change.
+
+The data flow graph defined above looks like this.
+
+<img src="https://cloud.githubusercontent.com/assets/68416/15389922/cf3f24dc-1dd6-11e6-92d6-058051b752ea.png">
 
 To force a synchronous evaluation of all reactive functions whose dependencies have updated, you can call
 
