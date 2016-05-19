@@ -82,7 +82,12 @@ This library is designed to work with [reactive-property](https://github.com/dat
 var ReactiveProperty = require("reactive-property");
 ```
 
-## API Documentation
+## API Reference
+
+ * [Managing Reactive Functions](#managing-reactive-functions)
+ * [Data Flow Execution](#data-flow-execution)
+
+### Managing Reactive Functions
 
 <a name="constructor" href="#constructor">#</a> <b>ReactiveFunction</b>(<i>options</i>)
 
@@ -111,6 +116,8 @@ Input properties for one reactive function may also be outputs of another.
 
 Cleans up resources allocated to this reactive function and removes listeners from inputs.
 
+### Data Flow Execution
+
 <a name="digest" href="#digest">#</a> ReactiveFunction.<b>digest</b>()
 
 Propagates changes from input properties through the data flow graph defined by all reactive properties using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting). An edge in the data flow graph corresponds to a case where the output of one reactive function is used as an input to another.
@@ -127,6 +134,7 @@ This is a simple polyfill for [requestAnimationFrame](https://developer.mozilla.
 
 ## Related Work
 
+ * [Functional Reactive Animation (academic paper)](https://www.eecs.northwestern.edu/~robby/courses/395-495-2009-winter/fran.pdf)
  * [ReactiveJS](https://github.com/mattbaker/Reactive.js)
  * [vogievetsky/DVL](https://github.com/vogievetsky/DVL)
  * [EmberJS Computed Properties](https://guides.emberjs.com/v2.0.0/object-model/computed-properties/)
