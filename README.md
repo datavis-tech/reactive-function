@@ -7,15 +7,18 @@ A library for managing reactive data flows.
 
 This library provides the ability to define reactive data flows by modeling application state as a directed graph and using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting) to compute the order in which changes should be propagated. This library works only with stateful properties encapsulated using [reactive-property](https://github.com/datavis-tech/reactive-property). The topological sorting algorithm is implemented in another package, [graph-data-structure](https://github.com/datavis-tech/graph-data-structure).
 
+**Table of Contents**
+
  * [Examples](#examples)
+   * [Full Name](#full-name)
+   * [ABC](#abc)
+   * [Tricky Case](#tricky-case)
  * [Installing](#installing)
  * [API Reference](#api-reference)
+   * [Managing Reactive Functions](#managing-reactive-functions)
+   * [Data Flow Execution](#data-flow-execution)
 
 ## Examples
-
- * [Full Name](#full-name)
- * [ABC](#abc)
- * [Tricky Case](#tricky-case)
 
 ### Full Name
 Suppose you have two reactive properties to represent someone's first and last name.
@@ -37,9 +40,7 @@ You could set the full name value like this.
 fullName(firstName() + " " + lastName());
 ```
 
-However, the above code sets the value of `fullName` only once. It does not get updated when `firstName` or `lastName` change.
-
-Here's how you can define a **[ReactiveFunction](#constructor)** that automatically updates `fullName` whenever `firstName` or `lastName` change.
+However, the above code sets the value of `fullName` only once. Here's how you can define a **[ReactiveFunction](#constructor)** that automatically updates `fullName` whenever `firstName` or `lastName` change.
 
 ```javascript
 var reactiveFunction = ReactiveFunction({
@@ -73,7 +74,11 @@ console.log(fullName()); // Prints "Jane Smith"
 
 The output of one reactive function can be used as an input to another.
 
-![abc](https://cloud.githubusercontent.com/assets/68416/15385597/44a10522-1dc0-11e6-9054-2150f851db46.png)
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/68416/15385597/44a10522-1dc0-11e6-9054-2150f851db46.png">
+  <br>
+  Here, b is both an output and an input.
+</p>
 
 ```javascript
 var a = ReactiveProperty(5);
@@ -83,17 +88,13 @@ var c = ReactiveProperty();
 ReactiveFunction({
   inputs: [a],
   output: b,
-  callback: function (a){
-    return a * 2;
-  }
+  callback: function (a){ return a * 2; }
 });
 
 ReactiveFunction({
   inputs: [b],
   output: c,
-  callback: function (b){
-    return b / 2;
-  }
+  callback: function (b){ return b / 2; }
 });
 
 ReactiveFunction.digest();
@@ -102,9 +103,13 @@ assert.equal(c(), 5);
 
 ### Tricky Case
 
-This is the case where [Model.js](https://github.com/curran/model) fails because it uses [Breadth-first Search](https://en.wikipedia.org/wiki/Breadth-first_search) to propagate changes. In this graph, propagation using breadth-first search would cause `e` to be set twice, and the first time it would be set with an *inconsistent state*. This fundamental flaw cropped up as flashes of inconstistent states in interactive visualizations. For example, it happens when you change the X column in this [Magic Heat Map](http://bl.ocks.org/curran/a54fc3a6578efcdc19f4). This flaw in Model.js is the main inspiration for making this library and using topological sort, which is the correct algorithm for propagating data flows and avoiding inconsistent states.
+This is the case where [Model.js](https://github.com/curran/model) fails because it uses [Breadth-first Search](https://en.wikipedia.org/wiki/Breadth-first_search) to propagate changes. In this graph, propagation using breadth-first search would cause `e` to be set twice, and the first time it would be set with an *inconsistent state*. This fundamental flaw cropped up as flashes of inconstistent states in some interactive visualizations built on Model.js. For example, it happens when you change the X column in this [Magic Heat Map](http://bl.ocks.org/curran/a54fc3a6578efcdc19f4). This flaw in Model.js is the main inspiration for making this library and using [topological sort](https://en.wikipedia.org/wiki/Topological_sorting), which is the correct algorithm for propagating data flows and avoiding inconsistent states.
 
-![Tricky Case](https://cloud.githubusercontent.com/assets/68416/15400254/7f779c9a-1e08-11e6-8992-9d2362bfba63.png)
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/68416/15400254/7f779c9a-1e08-11e6-8992-9d2362bfba63.png">
+  <br>
+  The tricky case, where breadth-first propagation fails.
+</p>
 
 ```javascript
 var a = ReactiveProperty(5);
