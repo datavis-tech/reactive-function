@@ -5,7 +5,7 @@ A library for managing reactive data flows.
 [![NPM](https://nodei.co/npm/reactive-function.png)](https://npmjs.org/package/reactive-function)
 [![NPM](https://nodei.co/npm-dl/reactive-function.png?months=3)](https://npmjs.org/package/reactive-function)
 
-This library provides the ability to define reactive data flows by modeling application state as a directed graph and using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting) to compute the order in which changes should be propagated. This library works only with stateful properties encapsulated using [reactive-property](https://github.com/datavis-tech/reactive-property). The topological sorting algorithm is implemented in another package, [graph-data-structure](https://github.com/datavis-tech/graph-data-structure).
+This library provides the ability to define reactive data flows by modeling application state as a directed graph and using [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting) to compute the order in which changes should be propagated. This library works with properties encapsulated using [reactive-property](https://github.com/datavis-tech/reactive-property). The topological sorting algorithm is implemented in another package, [graph-data-structure](https://github.com/datavis-tech/graph-data-structure).
 
 **Table of Contents**
 
