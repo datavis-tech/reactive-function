@@ -7,6 +7,17 @@ var ReactiveFunction = require("./index.js");
 
 var ReactiveProperty = require("reactive-property");
 
+var outputGraph = require("graph-diagrams")({
+
+  // If true, writes graph files to ../graph-diagrams for visualization.
+  outputGraphs: true,
+  project: "reactive-function"
+});
+
+function output(name){
+  outputGraph(ReactiveFunction.serializeGraph(), name);
+}
+
 describe("ReactiveFunction", function() { 
 
   it("Should depend on two reactive properties.", function () {
@@ -34,6 +45,12 @@ describe("ReactiveFunction", function() {
     lastName("Lennon");
     ReactiveFunction.digest();
     assert.equal(fullName(), "John Lennon");
+
+    // For serialization.
+    firstName.propertyName = "firstName";
+    lastName.propertyName = "lastName";
+    fullName.propertyName = "fullName";
+    output("full-name");
 
     reactiveFunction.destroy();
   });
@@ -67,6 +84,14 @@ describe("ReactiveFunction", function() {
     assert.equal(d(), 10);
     assert.equal(e(), 30);
 
+    // For serialization.
+    a.propertyName = "a";
+    b.propertyName = "b";
+    c.propertyName = "c";
+    d.propertyName = "d";
+    e.propertyName = "e";
+    output("any-number");
+
     rf1.destroy();
     rf2.destroy();
   });
@@ -74,7 +99,6 @@ describe("ReactiveFunction", function() {
   it("Should depend on a reactive function output.", function () {
 
     var a = ReactiveProperty(5);
-
     var b = ReactiveProperty();
     var c = ReactiveProperty();
 
@@ -96,6 +120,12 @@ describe("ReactiveFunction", function() {
 
     ReactiveFunction.digest();
     assert.equal(c(), 5);
+
+    // For serialization.
+    a.propertyName = "a";
+    b.propertyName = "b";
+    c.propertyName = "c";
+    output("abc");
 
     rf1.destroy();
     rf2.destroy();
@@ -128,6 +158,13 @@ describe("ReactiveFunction", function() {
     ReactiveFunction.digest();
     assert.equal(d(), 20);
 
+    // For serialization.
+    a.propertyName = "a";
+    b.propertyName = "b";
+    c.propertyName = "c";
+    d.propertyName = "d";
+    output("abcd");
+
     rf1.destroy();
     rf2.destroy();
   });
@@ -149,7 +186,6 @@ describe("ReactiveFunction", function() {
     //      e   
     //
     var a = ReactiveProperty(5);
-
     var b = ReactiveProperty();
     var c = ReactiveProperty();
     var d = ReactiveProperty();
@@ -168,6 +204,14 @@ describe("ReactiveFunction", function() {
     a(10);
     ReactiveFunction.digest();
     assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
+
+    // For serialization.
+    a.propertyName = "a";
+    b.propertyName = "b";
+    c.propertyName = "c";
+    d.propertyName = "d";
+    e.propertyName = "e";
+    output("tricky-case");
 
     rfs.forEach(function (reactiveFunction){
       reactiveFunction.destroy();
@@ -349,6 +393,11 @@ describe("ReactiveFunction", function() {
 
     assert.equal(b(), 5);
 
+    // For serialization.
+    a.propertyName = "a";
+    b.propertyName = "b";
+    output("ab");
+
     reactiveFunction.destroy();
   });
 
@@ -374,6 +423,11 @@ describe("ReactiveFunction", function() {
     b(100);
     ReactiveFunction.digest();
     assert.equal(a(), 100);
+
+    // For serialization.
+    a.propertyName = "a";
+    b.propertyName = "b";
+    output("data-binding");
 
     rf1.destroy();
     rf2.destroy();
@@ -430,6 +484,12 @@ describe("ReactiveFunction", function() {
     I(2)
     ReactiveFunction.digest();
     assert.equal(R(), 4.5);
+
+    // For serialization.
+    V.propertyName = "V";
+    I.propertyName = "I";
+    R.propertyName = "R";
+    output("ohms-law");
 
     rfs.forEach(function (reactiveFunction){
       reactiveFunction.destroy();

@@ -34,6 +34,7 @@
     "reactive-property": "^1.0.0"
   },
   "devDependencies": {
+    "graph-diagrams": "^0.5.0",
     "mocha": "^2.5.3"
   }
 }
