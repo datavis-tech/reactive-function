@@ -163,7 +163,28 @@ function isUndefined(obj){
 ReactiveFunction.nextFrame = nextFrame;
 
 ReactiveFunction.serializeGraph = function (){
-  return graph.serialize();
+  var serialized = graph.serialize();
+
+  // Replace ids with names for nodes.
+  serialized.nodes.forEach(function (node){
+    var name = properties[node.id].propertyName;
+    if(name){
+      node.id = name;
+    }
+  });
+
+  // Replace ids with names for links.
+  serialized.links.forEach(function (link){
+    var sourceName = properties[link.source].propertyName;
+    if(sourceName){
+      link.source = sourceName;
+    }
+    var targetName = properties[link.target].propertyName;
+    if(targetName){
+      link.target = targetName;
+    }
+  });
+  return serialized;
 }
 
 module.exports = ReactiveFunction;

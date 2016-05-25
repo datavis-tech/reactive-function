@@ -24,6 +24,7 @@ This library provides the ability to define reactive data flows by modeling appl
  * [API Reference](#api-reference)
    * [Managing Reactive Functions](#managing-reactive-functions)
    * [Data Flow Execution](#data-flow-execution)
+   * [Serialization](#serialization)
 
 ## Examples
 
@@ -209,6 +210,54 @@ Digests are debounced to the next animation frame rather than the next tick beca
 Schedules the given function to execute on the next animation frame or next tick.
 
 This is a simple polyfill for [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) that falls back to [setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout). The main reason for having this is for use in the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js), which run in a Node.js environment where `requestAnimationFrame` is not available. Automatic digests are debounced against this function.
+
+### Serialization
+
+Data flow graphs can be serialized to JSON, then visualized using [graph-diagrams](https://github.com/datavis-tech/graph-diagrams/).
+
+<a name="serialize" href="#serialize">#</a> ReactiveFunction.<b>serializeGraph</b>()
+
+Returns a serialized form of the graph. Node names are derived from `property.propertyName` for each property. If `propertyName` is not specified, then the automaticelly generated node id (an integer) is used as the node name.
+
+Example:
+
+```javascript
+var firstName = ReactiveProperty("Jane");
+var lastName = ReactiveProperty("Smith");
+var fullName = ReactiveProperty();
+
+// For serialization.
+firstName.propertyName = "firstName";
+lastName.propertyName = "lastName";
+fullName.propertyName = "fullName";
+
+ReactiveFunction({
+  inputs: [firstName, lastName],
+  output: fullName,
+  callback: function (first, last){
+    return first + " " + last;
+  }
+});
+
+var serialized = ReactiveFunction.serializeGraph();
+```
+The value of `serialized` will be:
+
+```json
+{
+  "nodes": [
+    { "id": "fullName" },
+    { "id": "firstName" },
+    { "id": "lastName" }
+  ],
+  "links": [
+    { "source": "firstName", "target": "fullName" },
+    { "source": "lastName",  "target": "fullName" }
+  ]
+}
+```
+
+See also <a href="https://github.com/datavis-tech/graph-data-structure#serialize"><i>graph</i>.<b>serialize</b>()</a>.
 
 ## Related Work
 
