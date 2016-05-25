@@ -494,7 +494,7 @@ describe("ReactiveFunction", function() {
     });
   });
 
-  //it("Should serialize a graph.", function (){
+  //it("Should serialize the data floe graph.", function (){
 
   //  var firstName = ReactiveProperty("Jane");
   //  var lastName = ReactiveProperty("Smith");
