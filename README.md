@@ -165,6 +165,7 @@ var ReactiveProperty = require("reactive-property");
 
  * [Managing Reactive Functions](#managing-reactive-functions)
  * [Data Flow Execution](#data-flow-execution)
+ * [Serialization](#serialization)
 
 ### Managing Reactive Functions
 
