@@ -97,15 +97,13 @@ function ReactiveFunction(options){
         graph.removeEdge(input.id, output.id);
       });
 
-      // Remove property nodes from the dependency graph if they have no edges connected.
-      //inputs.concat([output]).forEach(function (property){
-      //  var noOutgoing = (graph.outgoing(property.id).length === 0);
-      //  var noIncoming = (graph.incoming(property.id).length === 0);
-      //  inDegree, outDegree?
-      //  if(noOutgoing && noIncoming){
-      //    graph.removeNode(property.id);
-      //  }
-      //});
+      // Remove property nodes with no edges connected.
+      inputs.concat([output]).forEach(function (property){
+        var node = property.id;
+        if(graph.indegree(node) + graph.outdegree(node) === 0){
+          graph.removeNode(property.id);
+        }
+      });
 
       // Remove the reference to the 'evaluate' function.
       delete output.evaluate;

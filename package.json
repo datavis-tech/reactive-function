@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/datavis-tech/reactive-function#readme",
   "dependencies": {
-    "graph-data-structure": "^0.7.0",
+    "graph-data-structure": "^0.8.0",
     "reactive-property": "^1.0.0"
   },
   "devDependencies": {

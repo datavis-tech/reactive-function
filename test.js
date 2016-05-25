@@ -494,35 +494,35 @@ describe("ReactiveFunction", function() {
     });
   });
 
-  //it("Should serialize the data floe graph.", function (){
+  it("Should serialize the data flow graph.", function (){
 
-  //  var firstName = ReactiveProperty("Jane");
-  //  var lastName = ReactiveProperty("Smith");
-  //  var fullName = ReactiveProperty();
+    var firstName = ReactiveProperty("Jane");
+    var lastName = ReactiveProperty("Smith");
+    var fullName = ReactiveProperty();
 
-  //  ReactiveFunction({
-  //    inputs: [firstName, lastName],
-  //    output: fullName,
-  //    callback: function (first, last){
-  //      return first + " " + last;
-  //    }
-  //  });
+    ReactiveFunction({
+      inputs: [firstName, lastName],
+      output: fullName,
+      callback: function (first, last){
+        return first + " " + last;
+      }
+    });
 
-  //  var serialized = ReactiveFunction.serializeGraph();
+    var serialized = ReactiveFunction.serializeGraph();
 
-  //  console.log(JSON.stringify(serialized, null, 2));
+    //console.log(JSON.stringify(serialized, null, 2));
 
-  //  assert.equal(serialized.nodes.length, 3);
-  //  assert.equal(serialized.links.length, 2);
+    assert.equal(serialized.nodes.length, 3);
+    assert.equal(serialized.links.length, 2);
 
-  //  //assert.equal(serialized.nodes[0].id, "a");
-  //  //assert.equal(serialized.nodes[1].id, "b");
-  //  //assert.equal(serialized.nodes[2].id, "c");
+    //assert.equal(serialized.nodes[0].id, "a");
+    //assert.equal(serialized.nodes[1].id, "b");
+    //assert.equal(serialized.nodes[2].id, "c");
 
-  //  //assert.equal(serialized.links[0].source, "a");
-  //  //assert.equal(serialized.links[0].target, "b");
-  //  //assert.equal(serialized.links[1].source, "b");
-  //  //assert.equal(serialized.links[1].target, "c");
+    //assert.equal(serialized.links[0].source, "a");
+    //assert.equal(serialized.links[0].target, "b");
+    //assert.equal(serialized.links[1].source, "b");
+    //assert.equal(serialized.links[1].target, "c");
 
-  //});
+  });
 });
