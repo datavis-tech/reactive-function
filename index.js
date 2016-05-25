@@ -152,4 +152,8 @@ function isUndefined(obj){
 
 ReactiveFunction.nextFrame = nextFrame;
 
+ReactiveFunction.serializeGraph = function (){
+  return graph.serialize();
+}
+
 module.exports = ReactiveFunction;
