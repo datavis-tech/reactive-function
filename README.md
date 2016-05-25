@@ -194,7 +194,15 @@ Input properties for one reactive function may also be outputs of another.
 
 <a name="destroy" href="#destroy">#</a> <i>reactiveFunction</i>.<b>destroy</b>()
 
-Cleans up resources allocated to this reactive function and removes listeners from inputs.
+Cleans up resources allocated to this reactive function.
+
+More specifically:
+
+ * Removes listeners from inputs.
+ * Removes edges from the data flow graph (from each input).
+ * Removes property nodes from the data flow graph if they have no incoming or outgoing edges.
+
+You should invoke this function when finished using reactive functions in order to avoid memory leaks.
 
 ### Data Flow Execution
 
