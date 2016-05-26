@@ -580,19 +580,23 @@ describe("ReactiveFunction", function() {
     assert.equal(serialized.nodes.length, 3);
     assert.equal(serialized.links.length, 2);
 
-    assert.equal(serialized.nodes[0].id, "fullName");
-    assert.equal(serialized.nodes[1].id, "firstName");
-    assert.equal(serialized.nodes[2].id, "lastName");
+    assert.equal(serialized.nodes[0].id, "56");
+    assert.equal(serialized.nodes[1].id, "57");
+    assert.equal(serialized.nodes[2].id, "58");
 
-    assert.equal(serialized.links[0].source, "firstName");
-    assert.equal(serialized.links[0].target, "fullName");
-    assert.equal(serialized.links[1].source, "lastName");
-    assert.equal(serialized.links[1].target, "fullName");
+    assert.equal(serialized.nodes[0].propertyName, "fullName");
+    assert.equal(serialized.nodes[1].propertyName, "firstName");
+    assert.equal(serialized.nodes[2].propertyName, "lastName");
+
+    assert.equal(serialized.links[0].source, "57");
+    assert.equal(serialized.links[0].target, "56");
+    assert.equal(serialized.links[1].source, "58");
+    assert.equal(serialized.links[1].target, "56");
 
     rf.destroy();
   });
 
-  it("Should serialize the data flow graph, falling back to property ids.", function (){
+  it("Should serialize the data flow graph and omit property names if they are not present.", function (){
 
     var firstName = ReactiveProperty("Jane");
     var lastName = ReactiveProperty("Smith");
@@ -618,6 +622,8 @@ describe("ReactiveFunction", function() {
     assert.equal(serialized.nodes[1].id, "60");
     assert.equal(serialized.nodes[2].id, "61");
 
+    assert.equal(typeof serialized.nodes[0].propertyName, "undefined");
+
     assert.equal(serialized.links[0].source, "60");
     assert.equal(serialized.links[0].target, "59");
     assert.equal(serialized.links[1].source, "61");
@@ -626,7 +632,7 @@ describe("ReactiveFunction", function() {
     rf.destroy();
   });
 
-  it("Should serialize without any output specified (empty string as name).", function (){
+  it("Should serialize case without any output specified and use empty string as property name.", function (){
     var a = ReactiveProperty(5);
     var b = ReactiveProperty(10);
     var sideEffect = 0;
@@ -649,12 +655,16 @@ describe("ReactiveFunction", function() {
     //console.log(JSON.stringify(serialized, null, 2));
 
     assert.equal(serialized.nodes[0].id, "62");
-    assert.equal(serialized.nodes[1].id, "a");
-    assert.equal(serialized.nodes[2].id, "b");
+    assert.equal(serialized.nodes[1].id, "63");
+    assert.equal(serialized.nodes[2].id, "64");
 
-    assert.equal(serialized.links[0].source, "a");
+    assert.equal(serialized.nodes[0].propertyName, "");
+    assert.equal(serialized.nodes[1].propertyName, "a");
+    assert.equal(serialized.nodes[2].propertyName, "b");
+
+    assert.equal(serialized.links[0].source, "63");
     assert.equal(serialized.links[0].target, "62");
-    assert.equal(serialized.links[1].source, "b");
+    assert.equal(serialized.links[1].source, "64");
     assert.equal(serialized.links[1].target, "62");
     
     rf.destroy();

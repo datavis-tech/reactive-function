@@ -43,7 +43,12 @@ function ReactiveFunction(options){
 
   var inputs = options.inputs;
   var callback = options.callback;
-  var output = options.output || function (){};
+  var output = options.output;
+  
+  if(!output){
+    output = function (){};
+    output.propertyName = "";
+  }
 
   // This gets invoked during a digest, after inputs have been evaluated.
   output.evaluate = function (){
@@ -165,25 +170,14 @@ ReactiveFunction.nextFrame = nextFrame;
 ReactiveFunction.serializeGraph = function (){
   var serialized = graph.serialize();
 
-  // Replace ids with names for nodes.
+  // Add property names.
   serialized.nodes.forEach(function (node){
-    var name = properties[node.id].propertyName;
-    if(name){
-      node.id = name;
+    var propertyName = properties[node.id].propertyName;
+    if(typeof propertyName !== "undefined"){
+      node.propertyName = propertyName;
     }
   });
 
-  // Replace ids with names for links.
-  serialized.links.forEach(function (link){
-    var sourceName = properties[link.source].propertyName;
-    if(sourceName){
-      link.source = sourceName;
-    }
-    var targetName = properties[link.target].propertyName;
-    if(targetName){
-      link.target = targetName;
-    }
-  });
   return serialized;
 }
 
