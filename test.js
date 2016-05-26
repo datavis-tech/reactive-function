@@ -592,36 +592,37 @@ describe("ReactiveFunction", function() {
     rf.destroy();
   });
 
-  // Holding off until https://github.com/datavis-tech/graph-data-structure/issues/12
-  //it("Should serialize the data flow graph, falling back to property ids.", function (){
+  it("Should serialize the data flow graph, falling back to property ids.", function (){
 
-  //  var firstName = ReactiveProperty("Jane");
-  //  var lastName = ReactiveProperty("Smith");
-  //  var fullName = ReactiveProperty();
+    var firstName = ReactiveProperty("Jane");
+    var lastName = ReactiveProperty("Smith");
+    var fullName = ReactiveProperty();
 
-  //  ReactiveFunction({
-  //    inputs: [firstName, lastName],
-  //    output: fullName,
-  //    callback: function (first, last){
-  //      return first + " " + last;
-  //    }
-  //  });
+    ReactiveFunction({
+      inputs: [firstName, lastName],
+      output: fullName,
+      callback: function (first, last){
+        return first + " " + last;
+      }
+    });
 
-  //  var serialized = ReactiveFunction.serializeGraph();
+    var serialized = ReactiveFunction.serializeGraph();
 
-  //  console.log(JSON.stringify(serialized, null, 2));
+    assert.equal(serialized.nodes.length, 3);
+    assert.equal(serialized.links.length, 2);
 
-  //  assert.equal(serialized.nodes.length, 3);
-  //  assert.equal(serialized.links.length, 2);
+    // These tests may easily break if earlier tests are modified.
+    // Fix by copying values from:
+    //console.log(JSON.stringify(serialized, null, 2));
 
-  //  assert.equal(serialized.nodes[0].id, "fullName");
-  //  assert.equal(serialized.nodes[1].id, "firstName");
-  //  assert.equal(serialized.nodes[2].id, "lastName");
+    assert.equal(serialized.nodes[0].id, "59");
+    assert.equal(serialized.nodes[1].id, "60");
+    assert.equal(serialized.nodes[2].id, "61");
 
-  //  assert.equal(serialized.links[0].source, "firstName");
-  //  assert.equal(serialized.links[0].target, "fullName");
-  //  assert.equal(serialized.links[1].source, "lastName");
-  //  assert.equal(serialized.links[1].target, "fullName");
+    assert.equal(serialized.links[0].source, "60");
+    assert.equal(serialized.links[0].target, "59");
+    assert.equal(serialized.links[1].source, "61");
+    assert.equal(serialized.links[1].target, "59");
 
-  //});
+  });
 });
