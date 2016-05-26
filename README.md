@@ -11,7 +11,7 @@ This library provides the ability to define reactive data flows by modeling appl
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/68416/15476439/82b83244-212c-11e6-91d5-d975de8b6b8a.png">
   <br>
-  This library is built on top of <a href="https://github.com/datavis-tech/reactive-property">reactive-property</a> and <a href="https://github.com/datavis-tech/graph-data-structure">graph-data-structure</a>
+  This library is built on top of <a href="https://github.com/datavis-tech/reactive-property">reactive-property</a> and <a href="https://github.com/datavis-tech/graph-data-structure">graph-data-structure</a>.
 </p>
 
 **Table of Contents**
@@ -222,11 +222,9 @@ This is a simple polyfill for [requestAnimationFrame](https://developer.mozilla.
 
 ### Serialization
 
-Data flow graphs can be serialized to JSON, then visualized using [graph-diagrams](https://github.com/datavis-tech/graph-diagrams/).
-
 <a name="serialize" href="#serialize">#</a> ReactiveFunction.<b>serializeGraph</b>()
 
-Serializes the graph. Returns an object with the following properties.
+Serializes the data flow graph. Returns an object with the following properties.
 
  * `nodes` An array of objects, each with the following properties.
    * `id` The node identifier string.
@@ -273,7 +271,10 @@ The value of `serialized` will be:
 }
 ```
 
-See also <a href="https://github.com/datavis-tech/graph-data-structure#serialize"><i>graph</i>.<b>serialize</b>()</a>.
+See also:
+
+ * <a href="https://github.com/datavis-tech/graph-data-structure#serialize"><i>graph</i>.<b>serialize</b>()</a>
+ * [graph-diagrams](https://github.com/datavis-tech/graph-diagrams/)
 
 ## Related Work
 
