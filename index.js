@@ -28,7 +28,7 @@ var assignId = (function(){
   var counter = 1;
   return function (property){
     if(!property.id){
-      property.id = counter++;
+      property.id = String(counter++);
       properties[property.id] = property;
     }
   };
