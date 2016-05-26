@@ -10,7 +10,7 @@ var ReactiveProperty = require("reactive-property");
 var outputGraph = require("graph-diagrams")({
 
   // If true, writes graph files to ../graph-diagrams for visualization.
-  outputGraphs: true,
+  outputGraphs: false,
   project: "reactive-function"
 });
 
