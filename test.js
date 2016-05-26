@@ -596,9 +596,8 @@ describe("ReactiveFunction", function() {
 
     var firstName = ReactiveProperty("Jane");
     var lastName = ReactiveProperty("Smith");
-    var fullName = ReactiveProperty();
-
-    ReactiveFunction({
+    var fullName = ReactiveProperty(); 
+    var rf = ReactiveFunction({
       inputs: [firstName, lastName],
       output: fullName,
       callback: function (first, last){
@@ -624,5 +623,40 @@ describe("ReactiveFunction", function() {
     assert.equal(serialized.links[1].source, "61");
     assert.equal(serialized.links[1].target, "59");
 
+    rf.destroy();
+  });
+
+  it("Should serialize without any output specified (empty string as name).", function (){
+    var a = ReactiveProperty(5);
+    var b = ReactiveProperty(10);
+    var sideEffect = 0;
+
+    var rf = ReactiveFunction({
+      inputs: [a, b],
+      callback: function (a, b){
+        sideEffect++;
+      }
+    });
+
+    // For serialization.
+    a.propertyName = "a";
+    b.propertyName = "b";
+    var serialized = ReactiveFunction.serializeGraph();
+
+    assert.equal(serialized.nodes.length, 3);
+    assert.equal(serialized.links.length, 2);
+
+    //console.log(JSON.stringify(serialized, null, 2));
+
+    assert.equal(serialized.nodes[0].id, "62");
+    assert.equal(serialized.nodes[1].id, "a");
+    assert.equal(serialized.nodes[2].id, "b");
+
+    assert.equal(serialized.links[0].source, "a");
+    assert.equal(serialized.links[0].target, "62");
+    assert.equal(serialized.links[1].source, "b");
+    assert.equal(serialized.links[1].target, "62");
+    
+    rf.destroy();
   });
 });
