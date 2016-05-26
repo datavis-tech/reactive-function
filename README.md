@@ -226,7 +226,14 @@ Data flow graphs can be serialized to JSON, then visualized using [graph-diagram
 
 <a name="serialize" href="#serialize">#</a> ReactiveFunction.<b>serializeGraph</b>()
 
-Returns a serialized form of the graph. Node names are derived from `property.propertyName` for each property. If `propertyName` is not specified, then the automaticelly generated node id (an integer) is used as the node name.
+Serializes the graph. Returns an object with the following properties.
+
+ * `nodes` An array of objects, each with the following properties.
+   * `id` The node identifier string.
+   * `propertyName` The property name for this node, derived from `property.propertyName` for each property.
+ * `links` An array of objects representing edges, each with the following properties.
+   * `source` The node identifier string of the source node (**u**).
+   * `target` The node identifier string of the target node (**v**).
 
 Example:
 
@@ -255,13 +262,13 @@ The value of `serialized` will be:
 ```json
 {
   "nodes": [
-    { "id": "fullName" },
-    { "id": "firstName" },
-    { "id": "lastName" }
+    { "id": "95", "propertyName": "fullName" },
+    { "id": "96", "propertyName": "firstName" },
+    { "id": "97", "propertyName": "lastName" }
   ],
   "links": [
-    { "source": "firstName", "target": "fullName" },
-    { "source": "lastName",  "target": "fullName" }
+    { "source": "96", "target": "95" },
+    { "source": "97", "target": "95" }
   ]
 }
 ```
