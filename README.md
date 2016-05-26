@@ -20,6 +20,8 @@ This library provides the ability to define reactive data flows by modeling appl
    * [Full Name](#full-name)
    * [ABC](#abc)
    * [Tricky Case](#tricky-case)
+   * [Data Binding](#data-binding)
+   * [Ohm's Law](#ohms-law)
  * [Installing](#installing)
  * [API Reference](#api-reference)
    * [Managing Reactive Functions](#managing-reactive-functions)
@@ -137,6 +139,81 @@ assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
 a(10);
 ReactiveFunction.digest();
 assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
+```
+
+### Data Binding
+
+Data binding can be achieved by setting up reactive functions with the identity function. This causes values to be transferred without modification between properties. Here's an example of two-way data binding.
+
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/68416/15575748/17742d7e-2372-11e6-9d25-6e3caf114ca8.png">
+  <br>
+  An example of bidirectional data binding.
+</p>
+
+```javascript
+var a = ReactiveProperty(5);
+var b = ReactiveProperty(10);
+
+function identity(x){ return x; }
+ReactiveFunction({ inputs: [a], output: b, callback: identity });
+ReactiveFunction({ inputs: [b], output: a, callback: identity });
+
+ReactiveFunction.digest();
+
+// The most recently added edge takes precedence initially.
+assert.equal(b(), 10);
+
+// When a gets set, b gets updated.
+a(50);
+ReactiveFunction.digest();
+assert.equal(b(), 50);
+
+// When b gets set, a gets updated.
+b(100);
+ReactiveFunction.digest();
+assert.equal(a(), 100);
+```
+
+### Ohm's Law
+
+[Ohm's Law](https://en.wikipedia.org/wiki/Ohm%27s_law) is a mathematical relationship between 3 quantities in electrical circuits:
+
+ * V, voltage. V = IR
+ * I, current. I = V/R
+ * R, resistance. R = V/I
+
+Given any two of these values, one can calculate the third. Here's an example of three-way data binding where if any two of the values are set, the third will automatically be calculated.
+
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/68416/15575699/db091b10-2371-11e6-9b0e-8c77878039f5.png">
+  <br>
+  An example of tridirectional data binding.
+</p>
+
+```javascript
+var I = ReactiveProperty();
+var V = ReactiveProperty();
+var R = ReactiveProperty();
+
+ReactiveFunction({ output: V, inputs: [I, R], callback: function (i, r){ return i * r; } });
+ReactiveFunction({ output: I, inputs: [V, R], callback: function (v, r){ return v / r; } });
+ReactiveFunction({ output: R, inputs: [V, I], callback: function (v, i){ return v / i; } });
+
+V(9)
+I(2)
+ReactiveFunction.digest();
+console.log(R()); // Prints 4.5
+
+R(6)
+I(2)
+ReactiveFunction.digest();
+console.log(V()); // Prints 12
+
+V(9);
+R(18);
+ReactiveFunction.digest();
+console.log(I()); // Prints 0.5
 ```
 
 For more detailed example code, have a look at the [tests](https://github.com/datavis-tech/reactive-function/blob/master/test.js).
