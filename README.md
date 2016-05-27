@@ -246,6 +246,35 @@ More specifically:
 
 You should invoke this function when finished using reactive functions in order to avoid memory leaks.
 
+<a name="link" href="#link">#</a> <i>ReactiveFunction</i>.<b>link</b>(<i>propertyA</i>, <i>propertyB</i>)
+
+Links *propertyA* to *propertyB*. Returns an instance of **[ReactiveFunction](#constructor)**.
+
+Arguments:
+
+ * *propertyA* - A [reactive-property](https://github.com/datavis-tech/reactive-property). 
+ * *propertyB* - A [reactive-property](https://github.com/datavis-tech/reactive-property) that will be set to the value of *propertyA* and updated whenever *propertyA* changes.
+
+Example:
+
+```javascript
+var a = ReactiveProperty(5);
+var b = ReactiveProperty(10);
+var link = ReactiveFunction.link(a, b);
+```
+
+This is equivalent to:
+
+```javascript
+var a = ReactiveProperty(5);
+var b = ReactiveProperty(10);
+var link = ReactiveFunction({
+  inputs: [a],
+  output: b,
+  callback: function (a){ return a; }
+});
+```
+
 ### Data Flow Execution
 
 <a name="digest" href="#digest">#</a> ReactiveFunction.<b>digest</b>()
