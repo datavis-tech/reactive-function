@@ -332,6 +332,104 @@ describe("ReactiveFunction", function() {
         done();
       });
     });
+
+    it("Should be able to implement unidirectional data binding.", function (){
+      var a = ReactiveProperty(5);
+      var b = ReactiveProperty(10);
+      var reactiveFunction = ReactiveFunction({
+        inputs: [a],
+        output: b,
+        callback: function (a){
+          return a;
+        }
+      });
+
+      ReactiveFunction.digest();
+      assert.equal(b(), 5);
+
+      // For serialization.
+      a.propertyName = "a";
+      b.propertyName = "b";
+      output("ab");
+
+      reactiveFunction.destroy();
+    });
+
+    it("Should support unidirectional data binding via link().", function (){
+      var a = ReactiveProperty(5);
+      var b = ReactiveProperty(10);
+
+      var link = ReactiveFunction.link(a, b);
+
+      ReactiveFunction.digest();
+      assert.equal(b(), 5);
+
+      link.destroy();
+    });
+
+    it("Should compute Ohm's Law.", function (){
+
+      // These symbols are used in the definition of Ohm's law.
+      // See https://en.wikipedia.org/wiki/Ohm%27s_law
+      var I = ReactiveProperty();
+      var V = ReactiveProperty();
+      var R = ReactiveProperty();
+
+      var rfs = [
+
+        // I = V / R
+        ReactiveFunction({
+          inputs: [V, R],
+          output: I,
+          callback: function (v, r){ return v / r; }
+        }),
+
+        // V = I * R
+        ReactiveFunction({
+          inputs: [I, R],
+          output: V,
+          callback: function (i, r){ return i * r; }
+        }),
+
+        // R = V / I
+        ReactiveFunction({
+          inputs: [V, I],
+          output: R,
+          callback: function (v, i){ return v / i; }
+        })
+      ];
+
+      V(9)
+      I(2)
+      ReactiveFunction.digest();
+      assert.equal(R(), 4.5);
+
+      R(6)
+      I(2)
+      ReactiveFunction.digest();
+      assert.equal(V(), 12);
+
+      V(9);
+      R(18);
+      ReactiveFunction.digest();
+      assert.equal(I(), 0.5);
+
+      V(9)
+      I(2)
+      ReactiveFunction.digest();
+      assert.equal(R(), 4.5);
+
+      // For serialization.
+      V.propertyName = "V";
+      I.propertyName = "I";
+      R.propertyName = "R";
+      output("ohms-law");
+
+      rfs.forEach(function (reactiveFunction){
+        reactiveFunction.destroy();
+      });
+    });
+
   });
 
   describe("Cleanup", function (){
@@ -434,162 +532,11 @@ describe("ReactiveFunction", function() {
     });
   });
   
-  describe("Data Binding", function (){
-
-    it("Should be able to implement unidirectional data binding.", function (){
-      var a = ReactiveProperty(5);
-      var b = ReactiveProperty(10);
-      var reactiveFunction = ReactiveFunction({
-        inputs: [a],
-        output: b,
-        callback: function (a){
-          return a;
-        }
-      });
-
-      ReactiveFunction.digest();
-      assert.equal(b(), 5);
-
-      // For serialization.
-      a.propertyName = "a";
-      b.propertyName = "b";
-      output("ab");
-
-      reactiveFunction.destroy();
-    });
-
-    it("Should be able to implement bidirectional data binding.", function (){
-
-      var a = ReactiveProperty(5);
-      var b = ReactiveProperty(10);
-
-      function identity(x){ return x; }
-      var rf1 = ReactiveFunction({ inputs: [a], output: b, callback: identity });
-      var rf2 = ReactiveFunction({ inputs: [b], output: a, callback: identity });
-
-      ReactiveFunction.digest();
-
-      // The most recently added edge takes precedence.
-      assert.equal(b(), 10);
-
-      a(50);
-      ReactiveFunction.digest();
-      assert.equal(b(), 50);
-
-      b(100);
-      ReactiveFunction.digest();
-      assert.equal(a(), 100);
-
-      // For serialization.
-      a.propertyName = "a";
-      b.propertyName = "b";
-      output("data-binding");
-
-      rf1.destroy();
-      rf2.destroy();
-    });
-
-    it("Should compute Ohm's Law.", function (){
-
-      // These symbols are used in the definition of Ohm's law.
-      // See https://en.wikipedia.org/wiki/Ohm%27s_law
-      var I = ReactiveProperty();
-      var V = ReactiveProperty();
-      var R = ReactiveProperty();
-
-      var rfs = [
-
-        // I = V / R
-        ReactiveFunction({
-          inputs: [V, R],
-          output: I,
-          callback: function (v, r){ return v / r; }
-        }),
-
-        // V = I * R
-        ReactiveFunction({
-          inputs: [I, R],
-          output: V,
-          callback: function (i, r){ return i * r; }
-        }),
-
-        // R = V / I
-        ReactiveFunction({
-          inputs: [V, I],
-          output: R,
-          callback: function (v, i){ return v / i; }
-        })
-      ];
-
-      V(9)
-      I(2)
-      ReactiveFunction.digest();
-      assert.equal(R(), 4.5);
-
-      R(6)
-      I(2)
-      ReactiveFunction.digest();
-      assert.equal(V(), 12);
-
-      V(9);
-      R(18);
-      ReactiveFunction.digest();
-      assert.equal(I(), 0.5);
-
-      V(9)
-      I(2)
-      ReactiveFunction.digest();
-      assert.equal(R(), 4.5);
-
-      // For serialization.
-      V.propertyName = "V";
-      I.propertyName = "I";
-      R.propertyName = "R";
-      output("ohms-law");
-
-      rfs.forEach(function (reactiveFunction){
-        reactiveFunction.destroy();
-      });
-    });
-
-    it("Should support unidirectional data binding via link().", function (){
-      var a = ReactiveProperty(5);
-      var b = ReactiveProperty(10);
-
-      var link = ReactiveFunction.link(a, b);
-
-      ReactiveFunction.digest();
-      assert.equal(b(), 5);
-
-      link.destroy();
-    });
-
-    it("Should support bidirectional data binding via link().", function (){
-      var a = ReactiveProperty(5);
-      var b = ReactiveProperty(10);
-
-      var links = ReactiveFunction.link(a, b, true);
-
-      ReactiveFunction.digest();
-      assert.equal(b(), 5);
-
-      a(50);
-      ReactiveFunction.digest();
-      assert.equal(b(), 50);
-
-      b(100);
-      ReactiveFunction.digest();
-      //assert.equal(a(), 100);
-
-      links.destroy();
-    });
-  });
-
-  describe("Serialization", function() { 
+  describe("Serialization", function() {
 
     // These tests may easily break if upstream tests are modified.
     // Fix by changing the value of initialId.
-    var initialId = 60;
+    var initialId = 56;
 
     it("Should serialize the data flow graph.", function (){
 

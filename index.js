@@ -121,7 +121,6 @@ function ReactiveFunction(options){
 
 // Propagates changes through the dependency graph.
 ReactiveFunction.digest = function (){
-
   graph
     .topologicalSort(Object.keys(changed), false)
     .map(function (id){
@@ -181,13 +180,11 @@ ReactiveFunction.serializeGraph = function (){
   return serialized;
 }
 
-function identity(x){ return x; }
-
 ReactiveFunction.link = function (propertyA, propertyB){
   return ReactiveFunction({
     inputs: [propertyA],
     output: propertyB,
-    callback: identity
+    callback: function (x){ return x; }
   });
 }
 
