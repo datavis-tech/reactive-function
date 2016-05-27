@@ -248,7 +248,7 @@ You should invoke this function when finished using reactive functions in order 
 
 <a name="link" href="#link">#</a> <i>ReactiveFunction</i>.<b>link</b>(<i>propertyA</i>, <i>propertyB</i>)
 
-Links *propertyA* to *propertyB*. Returns an instance of **[ReactiveFunction](#constructor)**.
+Sets up one-way data binding from *propertyA* to *propertyB*. Returns an instance of **[ReactiveFunction](#constructor)**.
 
 Arguments:
 
