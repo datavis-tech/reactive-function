@@ -148,7 +148,7 @@ assert.equal(e(), ((a() * 2) + 5) + (a() * 3));
  * I, current. I = V/R
  * R, resistance. R = V/I
 
-Given any two of these values, one can calculate the third. Here's an example of three-way data binding where if any two of the values are set, the third will automatically be calculated.
+Given any two of these values, one can calculate the third. Here's an example where if any two of the values are set, the third will automatically be calculated.
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/68416/15575699/db091b10-2371-11e6-9b0e-8c77878039f5.png">
