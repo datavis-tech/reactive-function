@@ -556,16 +556,41 @@ describe("ReactiveFunction", function() {
       var a = ReactiveProperty(5);
       var b = ReactiveProperty(10);
 
-      var reactiveFunction = ReactiveFunction.link(a, b);
+      var link = ReactiveFunction.link(a, b);
 
       ReactiveFunction.digest();
       assert.equal(b(), 5);
 
-      reactiveFunction.destroy();
+      link.destroy();
+    });
+
+    it("Should support bidirectional data binding via link().", function (){
+      var a = ReactiveProperty(5);
+      var b = ReactiveProperty(10);
+
+      var links = ReactiveFunction.link(a, b, true);
+
+      ReactiveFunction.digest();
+      assert.equal(b(), 5);
+
+      a(50);
+      ReactiveFunction.digest();
+      assert.equal(b(), 50);
+
+      b(100);
+      ReactiveFunction.digest();
+      //assert.equal(a(), 100);
+
+      links.destroy();
     });
   });
 
   describe("Serialization", function() { 
+
+    // These tests may easily break if upstream tests are modified.
+    // Fix by changing the value of initialId.
+    var initialId = 60;
+
     it("Should serialize the data flow graph.", function (){
 
       var firstName = ReactiveProperty("Jane");
@@ -592,7 +617,7 @@ describe("ReactiveFunction", function() {
       assert.equal(serialized.nodes.length, 3);
       assert.equal(serialized.links.length, 2);
 
-      var idStart = 58;
+      var idStart = initialId;
 
       assert.equal(serialized.nodes[0].id, String(idStart));
       assert.equal(serialized.nodes[1].id, String(idStart + 1));
@@ -628,11 +653,7 @@ describe("ReactiveFunction", function() {
       assert.equal(serialized.nodes.length, 3);
       assert.equal(serialized.links.length, 2);
 
-      // These tests may easily break if earlier tests are modified.
-      // Fix by copying values from:
-      //console.log(JSON.stringify(serialized, null, 2));
-
-      var idStart = 61;
+      var idStart = initialId + 3;
 
       assert.equal(serialized.nodes[0].id, String(idStart));
       assert.equal(serialized.nodes[1].id, String(idStart + 1));
@@ -670,7 +691,7 @@ describe("ReactiveFunction", function() {
 
       //console.log(JSON.stringify(serialized, null, 2));
 
-      var idStart = 64;
+      var idStart = initialId + 6;
 
       assert.equal(serialized.nodes[0].id, String(idStart));
       assert.equal(serialized.nodes[1].id, String(idStart + 1));
