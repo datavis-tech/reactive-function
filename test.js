@@ -435,11 +435,10 @@ describe("ReactiveFunction", function() {
   });
   
   describe("Data Binding", function (){
-    it("Should be able to implement unidirectional data binding.", function (){
 
+    it("Should be able to implement unidirectional data binding.", function (){
       var a = ReactiveProperty(5);
       var b = ReactiveProperty(10);
-
       var reactiveFunction = ReactiveFunction({
         inputs: [a],
         output: b,
@@ -449,7 +448,6 @@ describe("ReactiveFunction", function() {
       });
 
       ReactiveFunction.digest();
-
       assert.equal(b(), 5);
 
       // For serialization.
@@ -466,7 +464,6 @@ describe("ReactiveFunction", function() {
       var b = ReactiveProperty(10);
 
       function identity(x){ return x; }
-
       var rf1 = ReactiveFunction({ inputs: [a], output: b, callback: identity });
       var rf2 = ReactiveFunction({ inputs: [b], output: a, callback: identity });
 
@@ -555,6 +552,17 @@ describe("ReactiveFunction", function() {
       });
     });
 
+    it("Should support unidirectional data binding via link().", function (){
+      var a = ReactiveProperty(5);
+      var b = ReactiveProperty(10);
+
+      var reactiveFunction = ReactiveFunction.link(a, b);
+
+      ReactiveFunction.digest();
+      assert.equal(b(), 5);
+
+      reactiveFunction.destroy();
+    });
   });
 
   describe("Serialization", function() { 
@@ -584,19 +592,21 @@ describe("ReactiveFunction", function() {
       assert.equal(serialized.nodes.length, 3);
       assert.equal(serialized.links.length, 2);
 
-      assert.equal(serialized.nodes[0].id, "56");
-      assert.equal(serialized.nodes[1].id, "57");
-      assert.equal(serialized.nodes[2].id, "58");
+      var idStart = 58;
+
+      assert.equal(serialized.nodes[0].id, String(idStart));
+      assert.equal(serialized.nodes[1].id, String(idStart + 1));
+      assert.equal(serialized.nodes[2].id, String(idStart + 2));
 
       assert.equal(serialized.nodes[0].propertyName, "fullName");
       assert.equal(serialized.nodes[1].propertyName, "firstName");
       assert.equal(serialized.nodes[2].propertyName, "lastName");
 
-      assert.equal(serialized.links[0].source, "57");
-      assert.equal(serialized.links[0].target, "56");
-      assert.equal(serialized.links[1].source, "58");
-      assert.equal(serialized.links[1].target, "56");
-
+      assert.equal(serialized.links[0].source, String(idStart + 1));
+      assert.equal(serialized.links[0].target, String(idStart));
+      assert.equal(serialized.links[1].source, String(idStart + 2));
+      assert.equal(serialized.links[1].target, String(idStart));
+                                               
       rf.destroy();
     });
 
@@ -622,16 +632,18 @@ describe("ReactiveFunction", function() {
       // Fix by copying values from:
       //console.log(JSON.stringify(serialized, null, 2));
 
-      assert.equal(serialized.nodes[0].id, "59");
-      assert.equal(serialized.nodes[1].id, "60");
-      assert.equal(serialized.nodes[2].id, "61");
+      var idStart = 61;
+
+      assert.equal(serialized.nodes[0].id, String(idStart));
+      assert.equal(serialized.nodes[1].id, String(idStart + 1));
+      assert.equal(serialized.nodes[2].id, String(idStart + 2));
 
       assert.equal(typeof serialized.nodes[0].propertyName, "undefined");
 
-      assert.equal(serialized.links[0].source, "60");
-      assert.equal(serialized.links[0].target, "59");
-      assert.equal(serialized.links[1].source, "61");
-      assert.equal(serialized.links[1].target, "59");
+      assert.equal(serialized.links[0].source, String(idStart + 1));
+      assert.equal(serialized.links[0].target, String(idStart));
+      assert.equal(serialized.links[1].source, String(idStart + 2));
+      assert.equal(serialized.links[1].target, String(idStart));
 
       rf.destroy();
     });
@@ -658,18 +670,20 @@ describe("ReactiveFunction", function() {
 
       //console.log(JSON.stringify(serialized, null, 2));
 
-      assert.equal(serialized.nodes[0].id, "62");
-      assert.equal(serialized.nodes[1].id, "63");
-      assert.equal(serialized.nodes[2].id, "64");
+      var idStart = 64;
+
+      assert.equal(serialized.nodes[0].id, String(idStart));
+      assert.equal(serialized.nodes[1].id, String(idStart + 1));
+      assert.equal(serialized.nodes[2].id, String(idStart + 2));
 
       assert.equal(serialized.nodes[0].propertyName, "");
       assert.equal(serialized.nodes[1].propertyName, "a");
       assert.equal(serialized.nodes[2].propertyName, "b");
 
-      assert.equal(serialized.links[0].source, "63");
-      assert.equal(serialized.links[0].target, "62");
-      assert.equal(serialized.links[1].source, "64");
-      assert.equal(serialized.links[1].target, "62");
+      assert.equal(serialized.links[0].source, String(idStart + 1));
+      assert.equal(serialized.links[0].target, String(idStart));
+      assert.equal(serialized.links[1].source, String(idStart + 2));
+      assert.equal(serialized.links[1].target, String(idStart));
       
       rf.destroy();
     });

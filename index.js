@@ -181,4 +181,14 @@ ReactiveFunction.serializeGraph = function (){
   return serialized;
 }
 
+function identity(x){ return x; }
+
+ReactiveFunction.link = function (propertyA, propertyB){
+  return ReactiveFunction({
+    inputs: [propertyA],
+    output: propertyB,
+    callback: identity
+  });
+}
+
 module.exports = ReactiveFunction;
