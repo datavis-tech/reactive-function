@@ -153,7 +153,7 @@ Given any two of these values, one can calculate the third. Here's an example of
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/68416/15575699/db091b10-2371-11e6-9b0e-8c77878039f5.png">
   <br>
-  An example of tridirectional data binding.
+  The data flow graph for Ohm's Law.
 </p>
 
 ```javascript
