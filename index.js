@@ -21,9 +21,6 @@ var properties = {};
 // Keys are property ids, values are truthy (the object acts like a Set).
 var changed = {};
 
-// A flag to indicate that an output property value is being set.
-var settingOutput = false;
-
 // Assigns an id to a reactive property so it can be a node in the graph.
 // Also stores a reference to the property by id in `properties`.
 // If the given property already has an id, does nothing.
@@ -65,10 +62,7 @@ function ReactiveFunction(options){
     if(defined(values)){
 
       // invoke the callback and assign the output value.
-      var outputValue = callback.apply(null, values);
-      settingOutput = true;
-      output(outputValue);
-      settingOutput = false;
+      output(callback.apply(null, values));
     }
 
   };
@@ -86,10 +80,8 @@ function ReactiveFunction(options){
   // These mark the properties as changed and queue the next digest.
   var listeners = inputs.map(function (property){
     return property.on(function (){
-      if(!settingOutput){
-        changed[property.id] = true;
-        queueDigest();
-      }
+      changed[property.id] = true;
+      queueDigest();
     });
   });
 
@@ -128,7 +120,7 @@ function ReactiveFunction(options){
 }
 
 // Propagates changes through the dependency graph.
-function digest(){
+ReactiveFunction.digest = function (){
   var changedIds = Object.keys(changed);
   changed = {};
   graph
@@ -139,12 +131,8 @@ function digest(){
     .forEach(function (property){
       property.evaluate();
     });
-
-  if(Object.keys(changed).length > 0){
-    digest();
-  }
+  changed = {};
 };
-ReactiveFunction.digest = digest;
 
 // This function queues a digest at the next tick of the event loop.
 var queueDigest = debounce(ReactiveFunction.digest);
