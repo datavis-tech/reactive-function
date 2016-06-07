@@ -506,6 +506,35 @@ describe("ReactiveFunction", function() {
       
     });
 
+    it("Should auto-digest properties changed within a digest.", function (){
+      var a = ReactiveProperty(5);
+      var b = ReactiveProperty();
+      var c = ReactiveProperty();
+
+      var rf1 = ReactiveFunction({
+        inputs: [a],
+        callback: function (a){
+          b(a + 1);
+        }
+      });
+
+      var rf2 = ReactiveFunction({
+        inputs: [b],
+        output: c,
+        callback: function (b){
+          return b / 2;
+        }
+      });
+
+      ReactiveFunction.digest();
+
+      assert.equal(c(), (a() + 1) / 2);
+
+      rf1.destroy();
+      rf2.destroy();
+      
+    });
+
   });
 
   describe("Cleanup", function (){
@@ -612,7 +641,7 @@ describe("ReactiveFunction", function() {
 
     // These tests may easily break if upstream tests are modified.
     // Fix by changing the value of initialId.
-    var initialId = 66;
+    var initialId = 70;
 
     it("Should serialize the data flow graph.", function (){
 
