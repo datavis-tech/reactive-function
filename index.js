@@ -121,15 +121,16 @@ function ReactiveFunction(options){
 
 // Propagates changes through the dependency graph.
 ReactiveFunction.digest = function (){
+  var changedIds = Object.keys(changed);
+  changed = {};
   graph
-    .topologicalSort(Object.keys(changed), false)
+    .topologicalSort(changedIds, false)
     .map(function (id){
       return properties[id];
     })
     .forEach(function (property){
       property.evaluate();
     });
-
   changed = {};
 };
 

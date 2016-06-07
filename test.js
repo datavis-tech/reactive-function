@@ -20,7 +20,7 @@ function output(name){
 
 describe("ReactiveFunction", function() { 
 
-  describe("Core Functionality", function() { 
+  describe("Core Functionality", function() {
     it("Should depend on two reactive properties.", function () {
 
       var firstName = ReactiveProperty("Jane");
@@ -430,6 +430,37 @@ describe("ReactiveFunction", function() {
       });
     });
 
+    it("Should execute a nested digest.", function (){
+      var a = ReactiveProperty(5);
+      var b = ReactiveProperty();
+      var c = ReactiveProperty();
+
+      var rf1 = ReactiveFunction({
+        inputs: [a],
+        callback: function (a){
+          for(var i = 0; i < a; i++){
+            b(i);
+            ReactiveFunction.digest();
+            assert.equal(c(), i / 2);
+          }
+        }
+      });
+
+      var rf2 = ReactiveFunction({
+        inputs: [b],
+        output: c,
+        callback: function (b){
+          return b / 2;
+        }
+      });
+
+      ReactiveFunction.digest();
+
+      rf1.destroy();
+      rf2.destroy();
+      
+    });
+
   });
 
   describe("Cleanup", function (){
@@ -536,7 +567,7 @@ describe("ReactiveFunction", function() {
 
     // These tests may easily break if upstream tests are modified.
     // Fix by changing the value of initialId.
-    var initialId = 56;
+    var initialId = 60;
 
     it("Should serialize the data flow graph.", function (){
 
