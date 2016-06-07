@@ -461,6 +461,51 @@ describe("ReactiveFunction", function() {
       
     });
 
+    it("Should execute a doubly nested digest.", function (){
+      var a = ReactiveProperty(5);
+      var b = ReactiveProperty();
+      var c = ReactiveProperty();
+
+      var d = ReactiveProperty();
+      var e = ReactiveProperty();
+
+      var rf1 = ReactiveFunction({
+        inputs: [a],
+        callback: function (a){
+          for(var i = 0; i < a; i++){
+            b(i);
+            ReactiveFunction.digest();
+            assert.equal(c(), i / 2);
+          }
+        }
+      });
+
+      var rf2 = ReactiveFunction({
+        inputs: [b],
+        output: c,
+        callback: function (b){
+          d(b);
+          ReactiveFunction.digest();
+          return e();
+        }
+      });
+
+      var rf3 = ReactiveFunction({
+        inputs: [d],
+        output: e,
+        callback: function (d){
+          return d / 2;
+        }
+      });
+
+      ReactiveFunction.digest();
+
+      rf1.destroy();
+      rf2.destroy();
+      rf3.destroy();
+      
+    });
+
   });
 
   describe("Cleanup", function (){
@@ -567,7 +612,7 @@ describe("ReactiveFunction", function() {
 
     // These tests may easily break if upstream tests are modified.
     // Fix by changing the value of initialId.
-    var initialId = 60;
+    var initialId = 66;
 
     it("Should serialize the data flow graph.", function (){
 
