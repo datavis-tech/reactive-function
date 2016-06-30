@@ -44,6 +44,10 @@ function ReactiveFunction(options){
   var inputs = options.inputs;
   var callback = options.callback;
   var output = options.output;
+
+  if(!defined(inputs)){
+    throw new Error("Attempting to use an undefined property as a reactive function input.");
+  }
   
   if(!output){
     output = function (){};

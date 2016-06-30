@@ -732,4 +732,21 @@ describe("ReactiveFunction", function() {
       rf.destroy();
     });
   });
+
+  describe("Edge Cases and Error Handling", function (){
+    it("Should throw error when input property is not defined.", function(){
+      var b = ReactiveProperty();
+
+      assert.throws(function (){
+        var rf = ReactiveFunction({
+          inputs: [undefined],
+          output: b,
+          callback: function (a){
+            return a * 2;
+          }
+        });
+      }, /Attempting to use an undefined property as a reactive function input/);
+
+    });
+  });
 });
